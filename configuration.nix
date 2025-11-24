@@ -4,9 +4,7 @@
 
 { config, lib, pkgs, nix-secrets, ... }:
 
-let
-  flattenAttrs = import ./flattenAttrs.nix { inherit lib; };
-in {
+{
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
@@ -39,7 +37,7 @@ in {
   boot.kernelParams = [ "console=ttyS0" ];
   boot.growPartition = true;
 
-  boot.kernel.sysctl = flattenAttrs "." {
+  boot.kernel.sysctl = lib.ext.flattenAttrs "." {
     vm = {
       # https://wiki.archlinux.org/title/Zram#Optimizing_swap_on_zram
       swappiness = 180;

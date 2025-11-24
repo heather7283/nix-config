@@ -9,11 +9,19 @@
 
     nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
   };
-  outputs = inputs@{ self, nixpkgs, sops-nix, nix-secrets, ... }: {
+  outputs = {
+    self,
+    nixpkgs,
+    sops-nix,
+    nix-secrets,
+    ...
+  } @ inputs: let
+    lib = nixpkgs.lib // { ext = import ./lib { lib = nixpkgs.lib; }; };
+  in {
     nixosConfigurations = {
       Proxima = nixpkgs.lib.nixosSystem {
         specialArgs = {
-          inherit nix-secrets;
+          inherit lib nix-secrets;
         };
         modules = [
           ./configuration.nix
