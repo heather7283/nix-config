@@ -16,19 +16,21 @@
     nix-secrets,
     ...
   } @ inputs: let
+    # extend lib with functions from ./lib directory and put them under lib.ext
     lib = nixpkgs.lib // { ext = import ./lib { lib = nixpkgs.lib; }; };
-  in {
-    nixosConfigurations = {
-      Proxima = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit lib nix-secrets;
-        };
-        modules = [
-          ./configuration.nix
-          sops-nix.nixosModules.sops
-        ];
+
+    genHost = hostname: lib.nixosSystem {
+      specialArgs = {
+        inherit lib nix-secrets;
       };
+      modules = [
+        ./common
+        ./hosts/${hostname}
+        sops-nix.nixosModules.sops
+      ];
     };
+  in with builtins; {
+    nixosConfigurations = mapAttrs (host: _: genHost host) (readDir ./hosts);
   };
 }
 
