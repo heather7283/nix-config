@@ -1,0 +1,65 @@
+{
+  "nodes": {
+    "nix-secrets": {
+      "locked": {
+        "lastModified": 1763939213,
+        "narHash": "sha256-qNltGnNBShLbNZ82jcFNJCZIfU7O+t4nh5nFbWxBNxo=",
+        "ref": "refs/heads/master",
+        "rev": "0158298f605f05e6dfa96b3e7161d31e4178ccd3",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heather7283/nix-secrets.git"
+      },
+      "original": {
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heather7283/nix-secrets.git"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1763334038,
+        "narHash": "sha256-LBVOyaH6NFzQ3X/c6vfMZ9k4SV2ofhpxeL9YnhHNJQQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4c8cdd5b1a630e8f72c9dd9bf582b1afb3127d2c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nix-secrets": "nix-secrets",
+        "nixpkgs": "nixpkgs",
+        "sops-nix": "sops-nix"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1763870012,
+        "narHash": "sha256-AHxFfIu73SpNLAOZbu/AvpLhZ/Szhx6gRPj9ufZtaZA=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "4e7d74d92398b933cc0e0e25af5b0836efcfdde3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
