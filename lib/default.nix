@@ -1,6 +1,7 @@
 { lib }:
 
 let
+  # flattenAttrs sep attrSet
   flattenAttrs = separator:
     let
       flatten = prefix: value:
@@ -18,6 +19,7 @@ let
     in
       value: flatten [] value
   ;
-in
-  flattenAttrs
+in {
+  inherit flattenAttrs;
+}
 
