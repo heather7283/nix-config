@@ -5,19 +5,18 @@
     ./hardware-configuration.nix
   ];
 
-  sops = let xfiles = nix-secrets.paths.proxima; in {
+  sops = let paths = nix-secrets.paths.proxima; in {
+    defaultSopsFile = paths."secrets.yaml";
+    defaultSopsFormat = "yaml";
     age = {
       sshKeyPaths = lib.mkForce []; # not needed in my config
       keyFile = "${config.users.users.heather.home}/.config/sops/age/keys.txt";
       generateKey = false;
     };
     secrets = {
-      "wireguard_private_key" = {
-        sopsFile = xfiles.wireguard;
-        key = "private_key";
-      };
-      "xray_config.json" = {
-        sopsFile = xfiles.xray;
+      "wireguard/private-key" = {};
+      "xray-config.json" = {
+        sopsFile = paths."xray-config.json";
         format = "json";
         key = "";
       };
@@ -64,7 +63,7 @@
 
   services.xray = {
     enable = true;
-    settingsFile = config.sops.secrets."xray_config.json".path;
+    settingsFile = config.sops.secrets."xray-config.json".path;
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
 
@@ -91,7 +90,7 @@
     };
     wireguard.interfaces.wg0 = {
       ips = [ "10.200.200.41/32" ];
-      privateKeyFile = config.sops.secrets."wireguard_private_key".path;
+      privateKeyFile = config.sops.secrets."wireguard/private-key".path;
       peers = [{
         publicKey = "i+NTNzzUn9vuRsmfyidoHgWtqKgb73OOQnajCX86b0c=";
         endpoint = "127.0.0.1:51821";
