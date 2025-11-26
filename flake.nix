@@ -7,6 +7,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
   };
   outputs = {
@@ -26,6 +31,7 @@
       modules = [
         ./common
         ./hosts/${hostname}
+        disko.nixosModules.disko
         sops-nix.nixosModules.sops
       ];
     };
