@@ -18,6 +18,7 @@
     self,
     nixpkgs,
     sops-nix,
+    disko,
     nix-secrets,
     ...
   } @ inputs: let
