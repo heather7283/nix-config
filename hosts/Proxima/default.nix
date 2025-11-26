@@ -65,6 +65,7 @@
       enable = false;
       useLocalResolver = true;
     };
+    nftables.enable = true;
     firewall = {
       enable = true;
       allowedTCPPorts = [ 443 37643 ];
