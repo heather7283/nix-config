@@ -6,7 +6,7 @@
     defaultSopsFormat = "yaml";
     age = {
       sshKeyPaths = lib.mkForce []; # not needed in my config
-      keyFile = "/etc/nixos/config/keys.txt";
+      keyFile = "/nix/config/keys.txt";
       generateKey = false;
     };
     secrets = {
