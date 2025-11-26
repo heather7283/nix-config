@@ -6,7 +6,7 @@
     defaultSopsFormat = "yaml";
     age = {
       sshKeyPaths = lib.mkForce []; # not needed in my config
-      keyFile = "${config.users.users.heather.home}/.config/sops/age/keys.txt";
+      keyFile = "/etc/nixos/config/keys.txt";
       generateKey = false;
     };
     secrets = {
