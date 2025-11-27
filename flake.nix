@@ -32,6 +32,7 @@
       modules = [
         ./common
         ./hosts/${hostname}
+        ./modules
         disko.nixosModules.disko
         sops-nix.nixosModules.sops
       ];
