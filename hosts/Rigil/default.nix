@@ -40,6 +40,8 @@
   system.nssModules = lib.mkForce([]);
   services.nscd.enable = false;
 
+  services.resolved.enable = lib.mkForce false;
+
   networking = {
     hostName = "Toliman";
     useDHCP = false;
@@ -91,7 +93,5 @@
     source = config.sops.templates."ens3.network".path;
     mode = "0644";
   };
-
-  system.stateVersion = "25.05";
 }
 
