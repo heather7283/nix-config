@@ -68,7 +68,7 @@
     Name=ens3
 
     [Network]
-    Address=${ip}/33
+    Address=${ip}/32
     Gateway=10.0.0.1
 
     [Route]
