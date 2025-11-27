@@ -79,9 +79,9 @@
       interfaces.wg0 = {
         ips = [ "10.200.200.1/24" ];
         listenPort = 51820;
-        privateKeyFile = config.sops.secrets."wireguard/private-key";
-        peers = let
-          mkPeer = pubkey: ip: { publicKey = pubkey; ip = "10.200.200.${ip}/32"; };
+        privateKeyFile = config.sops.secrets."wireguard/private-key".path;
+        peers = with builtins; let
+          mkPeer = key: ip: { publicKey = key; allowedIPs = [ "10.200.200.${toString ip}/32" ]; };
         in [
           (mkPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" 2) # fa506ih
           (mkPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" 10) # qblue
@@ -95,7 +95,7 @@
         ];
       };
     };
-    networking.nat = {
+    nat = {
       enable = true;
       internalInterfaces = [ "wg0" ];
       internalIPs = [ "10.200.200.0/24" ];
@@ -104,7 +104,7 @@
         { sourcePort = 8000; destination = "10.200.200.2"; }
         { sourcePort = 4533; destination = "10.200.200.10"; }
         { sourcePort = 50123; destination = "10.200.200.198"; }
-      ]
+      ];
     };
   };
   # xray, see https://discourse.nixos.org/t/why-cant-i-get-dns-nameservers-to-stick/59132
