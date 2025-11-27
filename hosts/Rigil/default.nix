@@ -72,7 +72,40 @@
       };
       logRefusedConnections = false; # pollutes logs a lot
     };
-    wg-quick.interfaces.wg0.configFile = config.sops.secrets."wg-quick-wg0.conf".path;
+
+    # Wireguard
+    wireguard = {
+      useNetworkd = true;
+      interfaces.wg0 = {
+        ips = [ "10.200.200.1/24" ];
+        listenPort = 51820;
+        privateKeyFile = config.sops.secrets."wireguard/private-key";
+        peers = let
+          mkPeer = pubkey: ip: { publicKey = pubkey; ip = "10.200.200.${ip}/32"; };
+        in [
+          (mkPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" 2) # fa506ih
+          (mkPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" 10) # qblue
+          (mkPeer "TG4GGODEYH0JUunFv+kXcpYbNLihODXcgR7X3b3Tbgw=" 20) # mi9l
+          (mkPeer "0ihUeP3zg9CmGjT4evfbcO1x2bnL7yHaytrttT1Mszs=" 3) # and pc
+          (mkPeer "KIRAECnHHExL8mpSgg2Ie9M9Bs78Wuctvz3hnK+bA28=" 197) # kir linux
+          (mkPeer "KIRAwgVP50u4P2jqBisGSqoZ4nQpfaKJ5HyvmuvdQ10=" 198) # kir windows
+          (mkPeer "kIRLBInjS/jHm11QMI55IEUV0wxewBwXgDnD6Uja0zk=" 199) # kir laptop
+          (mkPeer "yaRaK3hyUKfCZvQ8QGTnv490o5Q/Ty4zYPHUPnfAVgw=" 100) # yar ubuntu
+          (mkPeer "YAnDnt7Nebfdsdts2ugHZHUo2hmqL0pD//jpb9zwPmQ=" 41) # proxima
+        ];
+      };
+    };
+    networking.nat = {
+      enable = true;
+      internalInterfaces = [ "wg0" ];
+      internalIPs = [ "10.200.200.0/24" ];
+      externalInterface = "ens3";
+      forwardPorts = [
+        { sourcePort = 8000; destination = "10.200.200.2"; }
+        { sourcePort = 4533; destination = "10.200.200.10"; }
+        { sourcePort = 50123; destination = "10.200.200.198"; }
+      ]
+    };
   };
   # xray, see https://discourse.nixos.org/t/why-cant-i-get-dns-nameservers-to-stick/59132
   environment.etc."resolv.conf".text = ''
