@@ -76,7 +76,5 @@
     GatewayOnLink=true
   '';
   environment.etc."systemd/network/ens3.network".source = config.sops.templates."ens3.network".path;
-
-  system.stateVersion = "25.05";
 }
 
