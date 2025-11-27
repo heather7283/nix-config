@@ -42,6 +42,11 @@
 
   services.resolved.enable = lib.mkForce false;
 
+  services.jmusicbot = {
+    enable = true;
+    configFile = config.sops.secrets."jmusicbot-config.txt".path;
+  };
+
   networking = {
     hostName = "Rigil";
     useDHCP = false;
