@@ -13,8 +13,8 @@
     # https://unix.stackexchange.com/a/112232
     net.ipv4.conf.all.route_localnet=1;
 
-    net.core.default_qdisc=fq;
-    net.ipv4.tcp_congestion_control=bbr;
+    net.core.default_qdisc="fq";
+    net.ipv4.tcp_congestion_control="bbr";
   };
 
   services.openssh = {
@@ -43,7 +43,7 @@
   services.resolved.enable = lib.mkForce false;
 
   networking = {
-    hostName = "Toliman";
+    hostName = "Rigil";
     useDHCP = false;
     useNetworkd = true;
     resolvconf = {
