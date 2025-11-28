@@ -1,6 +1,33 @@
 { config, lib, pkgs, ... }:
 
-{
+with builtins; let
+  wrapIptables = commands:
+    map (cmd: "${pkgs.iptables}/bin/iptables " + cmd) commands;
+
+  cmdToIptablesArg = cmd:
+    if cmd == "up" then "-I" else if cmd == "down" then "-D" else throw "cmd must be up or down";
+
+  mkWgForwardRule = cmd: ip: _outer: _inner: proto: let
+    outer = toString _outer;
+    inner = toString _inner;
+    arg = cmdToIptablesArg cmd;
+  in wrapIptables [
+    # Whitelist outer port in the firewall
+    "${arg} INPUT -p ${proto} --dport ${outer} -j ACCEPT"
+    # Rewrite destination
+    "-t nat ${arg} PREROUTING -p ${proto} --dport ${outer} -j DNAT --to-destination ${ip}:${inner}"
+    # Fix return address
+    "-t nat ${arg} POSTROUTING -p ${proto} -d ${ip} --dport ${inner} -j MASQUERADE"
+    # Redirect traffic from local machine too
+    "-t nat ${arg} OUTPUT -p ${proto} --dport ${outer} -j DNAT --to-destination ${ip}:${inner}"
+  ];
+
+  mkWgForwardRules = cmd: rules: concatMap
+    (rule: concatMap (proto: mkWgForwardRule cmd rule.ip rule.outer rule.inner proto) rule.protos)
+    (map (rule: rule // (if rule?inner then {} else { inner = rule.outer; })) rules);
+
+  mkWgPeer = key: ip: { publicKey = key; allowedIPs = [ "${ip}/32" ]; };
+in {
   imports = [
     ./hardware-configuration.nix
     ./secrets.nix
@@ -77,29 +104,43 @@
     };
 
     # Wireguard
-    wg-quick.interfaces.wg0.configFile = config.sops.secrets."wg-quick-wg0.conf".path;
-
-    #wireguard = {
-    #  useNetworkd = true;
-    #  interfaces.wg0 = {
-    #    ips = [ "10.200.200.1/24" ];
-    #    listenPort = 51820;
-    #    privateKeyFile = config.sops.secrets."wireguard/private-key".path;
-    #    peers = with builtins; let
-    #      mkPeer = key: ip: { publicKey = key; allowedIPs = [ "10.200.200.${toString ip}/32" ]; };
-    #    in [
-    #      (mkPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" 2) # fa506ih
-    #      (mkPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" 10) # qblue
-    #      (mkPeer "TG4GGODEYH0JUunFv+kXcpYbNLihODXcgR7X3b3Tbgw=" 20) # mi9l
-    #      (mkPeer "0ihUeP3zg9CmGjT4evfbcO1x2bnL7yHaytrttT1Mszs=" 3) # and pc
-    #      (mkPeer "KIRAECnHHExL8mpSgg2Ie9M9Bs78Wuctvz3hnK+bA28=" 197) # kir linux
-    #      (mkPeer "KIRAwgVP50u4P2jqBisGSqoZ4nQpfaKJ5HyvmuvdQ10=" 198) # kir windows
-    #      (mkPeer "kIRLBInjS/jHm11QMI55IEUV0wxewBwXgDnD6Uja0zk=" 199) # kir laptop
-    #      (mkPeer "yaRaK3hyUKfCZvQ8QGTnv490o5Q/Ty4zYPHUPnfAVgw=" 100) # yar ubuntu
-    #      (mkPeer "YAnDnt7Nebfdsdts2ugHZHUo2hmqL0pD//jpb9zwPmQ=" 41) # proxima
-    #    ];
-    #  };
-    #};
+    wireguard = {
+      useNetworkd = true;
+      interfaces.wg0 = let
+        peers = [
+          (mkWgPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" "10.200.200.2") # fa506ih
+          (mkWgPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" "10.200.200.10") # qblue
+          (mkWgPeer "TG4GGODEYH0JUunFv+kXcpYbNLihODXcgR7X3b3Tbgw=" "10.200.200.20") # mi9l
+          (mkWgPeer "0ihUeP3zg9CmGjT4evfbcO1x2bnL7yHaytrttT1Mszs=" "10.200.200.3") # and pc
+          (mkWgPeer "KIRAECnHHExL8mpSgg2Ie9M9Bs78Wuctvz3hnK+bA28=" "10.200.200.197") # kir linux
+          (mkWgPeer "KIRAwgVP50u4P2jqBisGSqoZ4nQpfaKJ5HyvmuvdQ10=" "10.200.200.198") # kir windows
+          (mkWgPeer "kIRLBInjS/jHm11QMI55IEUV0wxewBwXgDnD6Uja0zk=" "10.200.200.199") # kir laptop
+          (mkWgPeer "yaRaK3hyUKfCZvQ8QGTnv490o5Q/Ty4zYPHUPnfAVgw=" "10.200.200.100") # yar ubuntu
+          (mkWgPeer "YAnDnt7Nebfdsdts2ugHZHUo2hmqL0pD//jpb9zwPmQ=" "10.200.200.41") # proxima
+        ];
+        rules = [
+          { ip = "10.200.200.2"; outer = 10000; inner = 11000; protos = [ "tcp" "udp" ]; }
+          { ip = "10.200.200.2"; outer = 8000; protos = [ "tcp" ]; }
+          { ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; }
+          { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; }
+        ];
+      in {
+        ips = [ "10.200.200.1/24" ];
+        listenPort = 51820;
+        privateKeyFile = config.sops.secrets."wireguard/private-key".path;
+        peers = peers;
+        postSetup = lib.concatLines ((wrapIptables [
+          "-I FORWARD -i wg0 -j ACCEPT"
+          "-I FORWARD -o wg0 -j ACCEPT"
+          "-t nat -I POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
+        ]) ++ (mkWgForwardRules "up" rules));
+        preShutdown = lib.concatLines ((wrapIptables [
+          "-D FORWARD -i wg0 -j ACCEPT"
+          "-D FORWARD -o wg0 -j ACCEPT"
+          "-t nat -D POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
+        ]) ++ (mkWgForwardRules "down" rules));
+      };
+    };
 
     # DO NOT USE NIXOS' BUILTIN NAT AND PORT FORWARDING OPTIONS!!!
     # They do NOT work how I want. I spent 2 hours fighting it in the past.
