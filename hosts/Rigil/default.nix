@@ -105,7 +105,7 @@ in {
 
     # Wireguard
     wireguard = {
-      useNetworkd = true;
+      useNetworkd = false;
       interfaces.wg0 = let
         peers = [
           (mkWgPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" "10.200.200.2") # fa506ih
