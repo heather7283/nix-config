@@ -11,6 +11,9 @@
     };
     secrets = {
       "ip" = {};
+      "password" = {
+        neededForUsers = true;
+      };
       "wireguard/private-key" = {};
       "xray-config.jsonc" = {
         sopsFile = paths."xray-config.jsonc";

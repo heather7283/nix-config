@@ -33,6 +33,9 @@ in {
     ./secrets.nix
   ];
 
+  users.mutableUsers = false;
+  users.users.heather.hashedPasswordFile = config.sops.secrets."password".path;
+
   services.openssh = {
     enable = true;
     listenAddresses = [{ addr = "0.0.0.0"; port = 60322; }];
