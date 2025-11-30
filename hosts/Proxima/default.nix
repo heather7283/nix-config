@@ -6,6 +6,9 @@
     ./secrets.nix
   ];
 
+  users.mutableUsers = false;
+  users.users.heather.hashedPasswordFile = config.sops.secrets."users/heather/password".path;
+
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   # Define on which hard drive you want to install Grub.

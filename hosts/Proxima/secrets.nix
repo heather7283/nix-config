@@ -10,6 +10,9 @@
       generateKey = false;
     };
     secrets = {
+      "users/heather/password" = {
+        neededForUsers = true;
+      };
       "wireguard/private-key" = {};
       "xray-config.json" = {
         sopsFile = paths."xray-config.json";
