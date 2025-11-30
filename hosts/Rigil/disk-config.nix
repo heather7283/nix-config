@@ -3,19 +3,19 @@
 
 {
   disko.devices = {
-    disk.disk1 = {
-      device = lib.mkDefault "/dev/vda";
+    disk.vda = {
+      device = "/dev/vda";
       type = "disk";
       content = {
         type = "gpt";
         partitions = {
           boot = {
-            name = "BOOT";
+            name = "boot";
             type = "EF02";
             size = "2M";
           };
           esp = {
-            name = "ESP";
+            name = "esp";
             type = "EF00";
             size = "500M";
             content = {
@@ -25,7 +25,7 @@
             };
           };
           root = {
-            name = "ROOT";
+            name = "root";
             size = "100%";
             content = {
               type = "btrfs";
