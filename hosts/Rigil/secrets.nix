@@ -11,7 +11,7 @@
     };
     secrets = {
       "ip" = {};
-      "password" = {
+      "users/heather/password" = {
         neededForUsers = true;
       };
       "wireguard/private-key" = {};

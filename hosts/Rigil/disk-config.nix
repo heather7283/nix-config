@@ -10,14 +10,14 @@
         type = "gpt";
         partitions = {
           boot = {
-            name = "boot";
-            size = "2M";
+            name = "BOOT";
             type = "EF02";
+            size = "2M";
           };
           esp = {
             name = "ESP";
-            size = "500M";
             type = "EF00";
+            size = "500M";
             content = {
               type = "filesystem";
               format = "vfat";
@@ -25,12 +25,16 @@
             };
           };
           root = {
-            name = "root";
+            name = "ROOT";
             size = "100%";
             content = {
-              type = "filesystem";
-              format = "ext4";
+              type = "btrfs";
+              extraArgs = [ "-f" ];
               mountpoint = "/";
+              mountOptions = [
+                "compress=zstd"
+                "noatime"
+              ];
             };
           };
         };
@@ -38,3 +42,4 @@
     };
   };
 }
+

@@ -34,7 +34,7 @@ in {
   ];
 
   users.mutableUsers = false;
-  users.users.heather.hashedPasswordFile = config.sops.secrets."password".path;
+  users.users.heather.hashedPasswordFile = config.sops.secrets."users/heather/password".path;
 
   services.openssh = {
     enable = true;
