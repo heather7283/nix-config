@@ -115,6 +115,7 @@ in {
           (mkWgPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" "10.200.200.10") # qblue
           (mkWgPeer "TG4GGODEYH0JUunFv+kXcpYbNLihODXcgR7X3b3Tbgw=" "10.200.200.20") # mi9l
           (mkWgPeer "0ihUeP3zg9CmGjT4evfbcO1x2bnL7yHaytrttT1Mszs=" "10.200.200.3") # and pc
+          (mkWgPeer "RvWdzzokCrVSL0fgvG/Exmp+2dYVmeSNKkhwmmT51z0=" "10.200.200.30") # and phone
           (mkWgPeer "KIRAECnHHExL8mpSgg2Ie9M9Bs78Wuctvz3hnK+bA28=" "10.200.200.197") # kir linux
           (mkWgPeer "KIRAwgVP50u4P2jqBisGSqoZ4nQpfaKJ5HyvmuvdQ10=" "10.200.200.198") # kir windows
           (mkWgPeer "kIRLBInjS/jHm11QMI55IEUV0wxewBwXgDnD6Uja0zk=" "10.200.200.199") # kir laptop
@@ -122,7 +123,6 @@ in {
           (mkWgPeer "YAnDnt7Nebfdsdts2ugHZHUo2hmqL0pD//jpb9zwPmQ=" "10.200.200.41") # proxima
         ];
         rules = [
-          { ip = "10.200.200.2"; outer = 10000; inner = 11000; protos = [ "tcp" "udp" ]; }
           { ip = "10.200.200.2"; outer = 8000; protos = [ "tcp" ]; }
           { ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; }
           { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; }
