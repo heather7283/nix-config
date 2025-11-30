@@ -79,6 +79,14 @@
 
   environment.etc."inputrc".text = "set editing-mode vi";
 
+  boot.kernel.sysctl = lib.ext.flattenAttrs "." {
+    # https://wiki.archlinux.org/title/Sysctl#Enable_TCP_Fast_Open
+    net.ipv4.tcp_fastopen = 3;
+    # https://wiki.archlinux.org/title/Sysctl#Enable_BBR
+    net.core.default_qdisc = "cake";
+    net.ipv4.tcp_congestion_control = "bbr";
+  };
+
   system.stateVersion = "25.11"; # Do not change
 }
 
