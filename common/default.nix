@@ -72,11 +72,9 @@
     python3
   ];
 
-  systemd = {
-    # https://github.com/systemd/systemd/issues/5356
-    extraConfig = lib.concatLines [
-      "StatusUnitFormat=combined"
-    ];
+  # https://github.com/systemd/systemd/issues/5356
+  systemd.settings.Manager = {
+      StatusUnitFormat = "combined";
   };
 
   environment.etc."inputrc".text = "set editing-mode vi";
