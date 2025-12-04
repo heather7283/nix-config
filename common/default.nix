@@ -77,6 +77,8 @@
       StatusUnitFormat = "combined";
   };
 
+  security.pam.services.login.failDelay = 500000;
+
   environment.etc."inputrc".text = "set editing-mode vi";
 
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
