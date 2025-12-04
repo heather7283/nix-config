@@ -49,7 +49,8 @@
 
   services.xray = {
     enable = true;
-    settingsFile = config.sops.secrets."xray-config.jsonc".path;
+    #settingsFile = config.sops.secrets."xray-config.jsonc".path;
+    settingsFile = "/etc/xray/fuckmylife.jsonc";
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
 
