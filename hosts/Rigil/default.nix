@@ -74,6 +74,9 @@ in {
     net.ipv4.conf.all.route_localnet=1;
   };
 
+  boot.extraModulePackages = with config.boot.kernelPackages; [ amneziawg ];
+  boot.kernelModules = [ "amneziawg" ];
+
   networking = {
     hostName = "Rigil";
 
@@ -125,6 +128,7 @@ in {
           { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; }
         ];
       in {
+        type = "amneziawg";
         ips = [ "10.200.200.1/24" ];
         listenPort = 51820;
         privateKeyFile = config.sops.secrets."wireguard/private-key".path;
@@ -139,6 +143,15 @@ in {
           "-D FORWARD -o wg0 -j ACCEPT"
           "-t nat -D POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
         ]) ++ (mkWgForwardRules "down" rules));
+        extraOptions = {
+          Jc = 2;
+          Jmin = 40;
+          Jmax = 70;
+          H1 = 1;
+          H2 = 2;
+          H3 = 3;
+          H4 = 4;
+        };
       };
     };
 
