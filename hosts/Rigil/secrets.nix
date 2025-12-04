@@ -18,14 +18,17 @@
       "xray-config.jsonc" = {
         sopsFile = paths."xray-config.jsonc";
         format = "binary";
+        restartUnits = [ "xray.service" ];
       };
       "jmusicbot-config.txt" = {
         sopsFile = paths."jmusicbot-config.txt";
         format = "binary";
+        restartUnits = [ "jmusicbot.service" ];
       };
       "wg-quick-wg0.conf" = {
         sopsFile = paths."wg-quick-wg0.conf";
         format = "binary";
+        restartUnits = [ "wireguard-wg0.service" ];
       };
     };
   };
