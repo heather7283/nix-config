@@ -49,7 +49,7 @@
 
   services.xray = {
     enable = true;
-    settingsFile = config.sops.secrets."xray-config.json".path;
+    settingsFile = config.sops.secrets."xray-config.jsonc".path;
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
 
