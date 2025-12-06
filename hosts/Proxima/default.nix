@@ -9,13 +9,6 @@
   users.mutableUsers = false;
   users.users.heather.hashedPasswordFile = config.sops.secrets."users/heather/password".path;
 
-  # Use the GRUB 2 boot loader.
-  boot.loader.grub.enable = true;
-  # Define on which hard drive you want to install Grub.
-  boot.loader.grub.device = "/dev/vda"; # or "nodev" for efi only
-  boot.kernelParams = [ "console=ttyS0" ];
-  boot.growPartition = true;
-
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
     vm = {
       # https://wiki.archlinux.org/title/Zram#Optimizing_swap_on_zram
