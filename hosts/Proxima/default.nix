@@ -22,6 +22,7 @@
   zramSwap = {
     enable = true;
     algorithm = "zstd";
+    priority = 200;
   };
 
   networking.hostName = "Proxima"; # Define your hostname.
@@ -42,8 +43,7 @@
 
   services.xray = {
     enable = true;
-    #settingsFile = config.sops.secrets."xray-config.jsonc".path;
-    settingsFile = "/etc/xray/fuckmylife.jsonc";
+    settingsFile = config.sops.secrets."xray-config.jsonc".path;
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
 
@@ -51,8 +51,8 @@
   services.vnstat.enable = true;
 
   # some systemd/glibc bloatware nonsense
-  system.nssModules = lib.mkForce([]);
-  services.nscd.enable = false;
+  system.nssModules = lib.mkForce [];
+  services.nscd.enable = lib.mkForce false;
 
   # configure networking
   networking = {
