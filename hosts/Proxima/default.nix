@@ -101,10 +101,18 @@
     };
     timers."check-egress-traffic" = {
       wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = "hourly";
-        Persistent = true;
-      };
+      timerConfig.OnCalendar = "hourly";
+    };
+
+    services."dump-vnstat-to-serial" = {
+      wantedBy = [ "multi-user.target" ];
+      path = with pkgs; [ vnstat ];
+      script = ''
+        while :; do
+          printf 'VNSTAT;%s\n' "$(vnstat --iface enp7s0 --oneline b)" >/dev/ttyS3
+          sleep 60
+        done
+      '';
     };
   };
 
