@@ -207,5 +207,39 @@ in {
     source = config.sops.templates."ens3.network".path;
     mode = "0644";
   };
+
+  # Doesn't even support DoH. What a failure.
+  #users.users.pihole = {
+  #  isSystemUser = true;
+  #  uid = 228;
+  #  group = "pihole";
+  #};
+  #users.groups.pihole.gid = 228;
+  #virtualisation.oci-containers.containers.pihole = {
+  #  serviceName = "pihole";
+  #  image = "pihole/pihole:latest";
+  #  ports = [
+  #    "10.200.200.1:54:53/tcp"
+  #    "10.200.200.1:54:53/udp"
+  #    "10.200.200.1:80:80/tcp"
+  #  ];
+  #  environment = {
+  #    TZ = "Europe/Amsterdam";
+  #    FTLCONF_dns_listeningMode = "ALL";
+  #    FTLCONF_webserver_api_password = "skibiditoilet";
+  #    PIHOLE_UID = "228";
+  #    PIHOLE_GID = "228";
+  #  };
+  #  volumes = [
+  #    "/var/lib/pihole:/etc/pihole"
+  #  ];
+  #  capabilities = {
+  #    CAP_NET_BIND_SERVICE = true;
+  #    CAP_CHOWN = true;
+  #  };
+  #  privileged = false;
+  #  autoStart = true;
+  #};
+  #systemd.services.pihole.serviceConfig.StateDirectory = "pihole";
 }
 
