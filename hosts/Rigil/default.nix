@@ -124,6 +124,7 @@ in {
         ];
         rules = [
           { ip = "10.200.200.2"; outer = 8000; protos = [ "tcp" ]; }
+          { ip = "10.200.200.2"; outer = 16228; protos = [ "udp" ]; } # project zomboid
           { ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; }
           { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; }
         ];
