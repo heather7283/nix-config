@@ -109,7 +109,7 @@
       path = with pkgs; [ vnstat ];
       script = ''
         while :; do
-          printf 'VNSTAT;%s\n' "$(vnstat --iface enp7s0 --oneline b)" >/dev/ttyS3
+          printf 'VNSTAT;%d;%s\n' "$(date +%s)" "$(vnstat --iface enp7s0 --oneline b)" >/dev/ttyS3
           sleep 60
         done
       '';
