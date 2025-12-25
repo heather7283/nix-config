@@ -13,6 +13,11 @@
     };
 
     nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
+
+    giorno = {
+      url = "git+ssh://git@github.com/heather7283/giorno.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     self,
@@ -20,8 +25,9 @@
     sops-nix,
     disko,
     nix-secrets,
+    giorno,
     ...
-  } @ inputs: let
+  } @ inputs: with builtins; let
     # extend lib with functions from ./lib directory and put them under lib.ext
     lib = nixpkgs.lib // { ext = import ./lib { lib = nixpkgs.lib; }; };
 
@@ -40,20 +46,24 @@
       });
     };
 
+    customModules = map
+      (p: ./modules/${p})
+      (attrNames (removeAttrs (readDir ./modules) [ "default.nix" ]));
+
     genHost = hostname: lib.nixosSystem {
       specialArgs = {
         inherit lib nix-secrets;
       };
-      modules = [
+      modules = customModules ++ [
         { nixpkgs.overlays = [ xray-overlay ]; }
-        ./common
-        ./hosts/${hostname}
-        ./modules
         disko.nixosModules.disko
         sops-nix.nixosModules.sops
+        giorno.nixosModules.giorno
+        ./common
+        ./hosts/${hostname}
       ];
     };
-  in with builtins; {
+  in {
     nixosConfigurations = mapAttrs (host: _: genHost host) (readDir ./hosts);
   };
 }

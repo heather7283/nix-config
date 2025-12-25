@@ -67,6 +67,12 @@ in {
     configFile = config.sops.secrets."jmusicbot-config.txt".path;
   };
 
+  services.giorno = {
+    enable = true;
+    configFile = config.sops.secrets."giorno/config.toml".path;
+    tokenFile = config.sops.secrets."giorno/token.txt".path;
+  };
+
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
     # DO NOT REMOVE
     net.ipv4.ip_forward=1;

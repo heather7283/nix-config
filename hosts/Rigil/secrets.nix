@@ -30,6 +30,16 @@
         format = "binary";
         restartUnits = [ "wireguard-wg0.service" ];
       };
+      "giorno/config.toml" = {
+        sopsFile = paths.giorno."config.toml";
+        format = "binary";
+        restartUnits = [ "giorno.service" ];
+      };
+      "giorno/token.txt" = {
+        sopsFile = paths.giorno."token.txt";
+        format = "binary";
+        restartUnits = [ "giorno.service" ];
+      };
     };
   };
 }
