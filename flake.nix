@@ -28,8 +28,8 @@
     giorno,
     ...
   } @ inputs: with builtins; let
-    # extend lib with functions from ./lib directory and put them under lib.ext
-    lib = nixpkgs.lib // { ext = import ./lib { lib = nixpkgs.lib; }; };
+    # extend lib with custom functions from ./lib directory
+    lib = nixpkgs.lib // import ./lib { inherit (nixpkgs) lib; };
 
     xray-overlay = final: prev: {
       xray = prev.xray.overrideAttrs (old: rec {

@@ -1,7 +1,13 @@
 { lib }:
 
 with builtins; let
-  files = attrNames (removeAttrs (readDir ./.) [ "default.nix" ]);
-  functions = foldl' (acc: f: acc // (import ./${f} { inherit lib; })) {} files;
-in functions
+  getDirImports = dir: map
+    (file: "${dir}/${file}")
+    (attrNames (removeAttrs (readDir dir) [ "default.nix" ]))
+  ;
+in {
+  ext = {
+    inherit getDirImports;
+  } // foldl' (acc: f: acc // (import ./${f} { inherit lib; })) {} (getDirImports ./.);
+}
 
