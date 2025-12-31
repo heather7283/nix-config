@@ -28,10 +28,7 @@ with builtins; let
 
   mkWgPeer = key: ip: { publicKey = key; allowedIPs = [ "${ip}/32" ]; };
 in {
-  imports = [
-    ./hardware-configuration.nix
-    ./secrets.nix
-  ];
+  imports = lib.ext.getDirImports ./.;
 
   users.mutableUsers = false;
   users.users.heather.hashedPasswordFile = config.sops.secrets."users/heather/password".path;

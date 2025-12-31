@@ -1,10 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [
-    ./zsh.nix
-    ./neovim.nix
-  ];
+  imports = lib.ext.getDirImports ./.;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

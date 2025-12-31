@@ -1,10 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [
-    ./hardware-configuration.nix # Include the results of the hardware scan.
-    ./secrets.nix
-  ];
+  imports = lib.ext.getDirImports ./.;
 
   users.mutableUsers = false;
   users.users.heather.hashedPasswordFile = config.sops.secrets."users/heather/password".path;

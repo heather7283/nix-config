@@ -2,6 +2,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
+    nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,8 +13,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
 
     giorno = {
       url = "git+ssh://git@github.com/heather7283/giorno.git";
@@ -46,19 +46,16 @@
       });
     };
 
-    customModules = map
-      (p: ./modules/${p})
-      (attrNames (removeAttrs (readDir ./modules) [ "default.nix" ]));
-
     genHost = hostname: lib.nixosSystem {
       specialArgs = {
         inherit lib nix-secrets;
       };
-      modules = customModules ++ [
+      modules = [
         { nixpkgs.overlays = [ xray-overlay ]; }
         disko.nixosModules.disko
         sops-nix.nixosModules.sops
         giorno.nixosModules.giorno
+        ./modules
         ./common
         ./hosts/${hostname}
       ];
