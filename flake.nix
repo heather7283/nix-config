@@ -1,14 +1,19 @@
 {
-  inputs = let
-    followsNixpkgs = url: { inherit url; inputs.nixpkgs.follows = "nixpkgs"; };
-  in {
+  # apparently functions are not allowed in flake inputs so I have to repeat
+  # the `inputs.nixpkgs.follows = "nixpkgs";` mantra for every fucking input
+  inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
 
-    sops-nix = followsNixpkgs "github:Mic92/sops-nix";
-    disko = followsNixpkgs "github:nix-community/disko";
-    giorno = followsNixpkgs "git+ssh://git@github.com/heather7283/giorno.git";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    giorno.url = "git+ssh://git@github.com/heather7283/giorno.git";
+    giorno.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = {
     self,
