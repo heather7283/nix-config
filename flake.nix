@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
+    secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -18,7 +18,7 @@
   outputs = {
     self,
     nixpkgs,
-    nix-secrets,
+    secrets,
     ...
   } @ inputs: let
     # extend lib with custom functions from ./lib directory
@@ -26,7 +26,7 @@
 
     genHost = hostname: lib.nixosSystem {
       specialArgs = {
-        inherit lib nix-secrets;
+        inherit lib secrets;
       };
       modules = [
         inputs.sops-nix.nixosModules.sops

@@ -1,7 +1,9 @@
-{ config, lib, pkgs, nix-secrets, ... }:
+{ config, lib, pkgs, secrets, ... }:
 
 {
-  sops = let paths = nix-secrets.paths.rigil; in {
+  sops = let
+    paths = secrets.paths.rigil;
+  in {
     defaultSopsFile = paths."secrets.yaml";
     defaultSopsFormat = "yaml";
     age = {

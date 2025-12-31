@@ -1,7 +1,9 @@
-{ config, lib, pkgs, nix-secrets, ... }:
+{ config, lib, pkgs, secrets, ... }:
 
 {
-  sops = let paths = nix-secrets.paths.proxima; in {
+  sops = let
+    paths = secrets.paths.proxima;
+  in {
     defaultSopsFile = paths."secrets.yaml";
     defaultSopsFormat = "yaml";
     age = {
