@@ -1,33 +1,21 @@
 {
-  inputs = {
+  inputs = let
+    followsNixpkgs = url: { inherit url; inputs.nixpkgs.follows = "nixpkgs"; };
+  in {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nix-secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
 
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    giorno = {
-      url = "git+ssh://git@github.com/heather7283/giorno.git";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    sops-nix = followsNixpkgs "github:Mic92/sops-nix";
+    disko = followsNixpkgs "github:nix-community/disko";
+    giorno = followsNixpkgs "git+ssh://git@github.com/heather7283/giorno.git";
   };
   outputs = {
     self,
     nixpkgs,
-    sops-nix,
-    disko,
     nix-secrets,
-    giorno,
     ...
-  } @ inputs: with builtins; let
+  } @ inputs: let
     # extend lib with custom functions from ./lib directory
     lib = nixpkgs.lib // import ./lib { inherit (nixpkgs) lib; };
 
@@ -36,16 +24,16 @@
         inherit lib nix-secrets;
       };
       modules = [
-        disko.nixosModules.disko
-        sops-nix.nixosModules.sops
-        giorno.nixosModules.giorno
+        inputs.sops-nix.nixosModules.sops
+        inputs.disko.nixosModules.disko
+        inputs.giorno.nixosModules.giorno
         ./overlays
         ./modules
         ./common
         ./hosts/${hostname}
       ];
     };
-  in {
+  in with builtins; {
     nixosConfigurations = mapAttrs (host: _: genHost host) (readDir ./hosts);
   };
 }
