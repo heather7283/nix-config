@@ -22,7 +22,7 @@
     priority = 200;
   };
 
-  networking.hostName = "Proxima"; # Define your hostname.
+  networking.hostName = "proxima"; # Define your hostname.
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
