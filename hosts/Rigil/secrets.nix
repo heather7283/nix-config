@@ -25,11 +25,6 @@
         format = "binary";
         restartUnits = [ "jmusicbot.service" ];
       };
-      "wg-quick-wg0.conf" = {
-        sopsFile = paths."wg-quick-wg0.conf";
-        format = "binary";
-        restartUnits = [ "wireguard-wg0.service" ];
-      };
       "giorno/config.toml" = {
         sopsFile = paths.giorno."config.toml";
         format = "binary";
