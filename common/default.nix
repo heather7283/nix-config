@@ -35,7 +35,9 @@
       StatusUnitFormat = "combined";
   };
 
-  security.pam.services.login.failDelay.delay = 500000;
+  security.loginDefs.settings = {
+    FAIL_DELAY = 1;
+  };
 
   environment.etc."inputrc".text = "set editing-mode vi";
 
