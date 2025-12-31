@@ -4,7 +4,12 @@
   imports = lib.ext.getDirImports ./.;
 
   users.mutableUsers = false;
-  users.users.heather.hashedPasswordFile = config.sops.secrets."users/heather/password".path;
+  users.users.heather = {
+    hashedPasswordFile = config.sops.secrets."users/heather/password".path;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICpdk79pzgahzN3CMCWMxWafgINDPWxwtQFt4okXpIAi FA506IH"
+    ];
+  };
 
   services.openssh = {
     enable = true;
