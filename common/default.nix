@@ -33,9 +33,11 @@
       StatusUnitFormat = "combined";
   };
 
-  security.loginDefs.settings.FAIL_DELAY = 1;
-  security.sudo.extraConfig = "Defaults lecture=never";
-  pam.services.sudo.failDelay = { enable = true; delay = 500000; };
+  security = {
+    sudo.extraConfig = "Defaults lecture=never";
+    loginDefs.settings.FAIL_DELAY = 1;
+    pam.services.sudo.failDelay = { enable = true; delay = 500000; };
+  };
 
   environment.etc."inputrc".text = "set editing-mode vi";
 
