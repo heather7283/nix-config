@@ -8,6 +8,6 @@ with builtins; let
 in {
   ext = {
     inherit getDirImports;
-  } // foldl' (acc: f: acc // (import ./${f} { inherit lib; })) {} (getDirImports ./.);
+  } // foldl' (acc: f: acc // (import f { inherit lib; })) {} (getDirImports ./.);
 }
 
