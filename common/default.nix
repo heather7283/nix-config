@@ -9,13 +9,11 @@
   i18n.defaultLocale = "C.UTF-8";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    heather = {
+  users = {
+    mutableUsers = false;
+    users.heather = {
       isNormalUser = true;
       extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKW47TMs+tXJEl6bY0FGd54kf5DM/g21mfA5tij5JNJc heather@FA506IH"
-      ];
       shell = pkgs.zsh;
       packages = with pkgs; [ fzf btop ];
     };
