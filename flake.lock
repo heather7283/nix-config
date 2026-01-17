@@ -177,11 +177,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768167643,
-        "narHash": "sha256-rR6bkXGHgn52eH2tFol9pLvOpPZ9NGl0jxFh6pl/eYI=",
+        "lastModified": 1768685485,
+        "narHash": "sha256-GMETX9xHjxZy1tcFsma2bPUPLouT/rZ0/j8pjet6Ao4=",
         "ref": "refs/heads/master",
-        "rev": "f26797ad6dd4b87013d8abf360d046ab8c87da5e",
-        "revCount": 40,
+        "rev": "8dac966eaa6af363a0a39ec830b4298a5e07ba75",
+        "revCount": 41,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/ycurator.git"
       },
