@@ -36,7 +36,13 @@
   security = {
     sudo.extraConfig = "Defaults lecture=never";
     loginDefs.settings.FAIL_DELAY = 1;
-    pam.services.sudo.failDelay = { enable = true; delay = 500000; };
+    pam.services.sudo = {
+      nodelay = true;
+      failDelay = {
+        enable = true;
+        delay = 100000; # I might have anger management issues
+      };
+    };
   };
 
   environment.etc."inputrc".text = "set editing-mode vi";
