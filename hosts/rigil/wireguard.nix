@@ -58,6 +58,7 @@ in {
         #{ ip = "10.200.200.2"; outer = 16228; protos = [ "udp" ]; } # project zomboid
         { ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; } # navidrome on qboxblue
         { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; } # kir's nonsense
+        { ip = "10.200.200.198"; outer = 26639; protos = [ "tcp" ]; } # kir's comfy ui
       ];
     in {
       type = "amneziawg";
