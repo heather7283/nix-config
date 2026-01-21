@@ -64,11 +64,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766661606,
-        "narHash": "sha256-3qEfYy0SYv4MDoO00poP3fTyg0jEBN2B/ywKSPCIVAI=",
+        "lastModified": 1769005973,
+        "narHash": "sha256-bq0PqaUkMtJnHOUT0nh14esot31xdP4iPSYFNiG6uWs=",
         "ref": "refs/heads/master",
-        "rev": "5463a24f2b488a66daaef5e9b0af89215697ca25",
-        "revCount": 41,
+        "rev": "f22ee2b656814b541d5401f6e9304a93fed4c66a",
+        "revCount": 43,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/giorno.git"
       },
