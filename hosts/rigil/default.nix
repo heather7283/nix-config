@@ -54,8 +54,6 @@
   };
 
   networking = {
-    hostName = "rigil";
-
     useDHCP = false;
     useNetworkd = true;
 

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, secrets, hostname, ... }:
 
 {
   sops = {
@@ -9,6 +9,9 @@
       keyFile = lib.mkDefault "/nix/config/keys.txt";
       generateKey = lib.mkDefault false;
     };
+
+    defaultSopsFile = secrets.paths."${hostname}"."secrets.yaml";
+    defaultSopsFormat = "yaml";
   };
 }
 

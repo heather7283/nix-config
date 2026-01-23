@@ -1,9 +1,12 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hostname, ... }:
 
 {
   imports = lib.ext.getDirImports ./.;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # passed as an extra argument from flake.nix
+  networking.hostName = hostname;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "C.UTF-8";

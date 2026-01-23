@@ -29,7 +29,7 @@
 
     genHost = hostname: lib.nixosSystem {
       specialArgs = {
-        inherit lib secrets;
+        inherit lib secrets hostname;
       };
       modules = [
         inputs.sops-nix.nixosModules.sops

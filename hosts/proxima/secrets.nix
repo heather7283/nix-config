@@ -1,12 +1,9 @@
-{ config, lib, pkgs, secrets, ... }:
+{ config, lib, pkgs, secrets, hostname, ... }:
 
 {
   sops = let
-    paths = secrets.paths.proxima;
+    paths = secrets.paths."${hostname}";
   in {
-    defaultSopsFile = paths."secrets.yaml";
-    defaultSopsFormat = "yaml";
-
     secrets = {
       "users/heather/password" = {
         neededForUsers = true;

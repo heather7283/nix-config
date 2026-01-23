@@ -1,12 +1,9 @@
-{ config, lib, pkgs, secrets, ... }:
+{ config, lib, pkgs, secrets, hostname, ... }:
 
 {
   sops = let
-    paths = secrets.paths.rigil;
+    paths = secrets.paths."${hostname}";
   in {
-    defaultSopsFile = paths."secrets.yaml";
-    defaultSopsFormat = "yaml";
-
     secrets = {
       "ip" = {};
       "users/heather/password" = {
