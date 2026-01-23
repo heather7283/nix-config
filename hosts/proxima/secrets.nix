@@ -6,11 +6,7 @@
   in {
     defaultSopsFile = paths."secrets.yaml";
     defaultSopsFormat = "yaml";
-    age = {
-      sshKeyPaths = lib.mkForce []; # not needed in my config
-      keyFile = "/nix/config/keys.txt";
-      generateKey = false;
-    };
+
     secrets = {
       "users/heather/password" = {
         neededForUsers = true;
