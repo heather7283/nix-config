@@ -83,38 +83,6 @@
     nameserver 127.0.0.1
   '';
 
-  systemd = {
-    services."check-egress-traffic" = {
-      path = with pkgs; [ vnstat jq ];
-      script = ''
-        set -eu
-
-        tx_bytes="$(vnstat --json m 1 \
-                    | jq '.interfaces[] | select(.name == "enp7s0").traffic.month[].tx')"
-        tx_gigs=$((tx_bytes / 1024 / 1024 / 1024))
-
-        if [ "$tx_gigs" -ge 90 ]; then
-          printf "WARNING: %s GiB (%s B) transferred!\n" "$tx_gigs" "$tx_bytes"
-        fi
-      '';
-    };
-    timers."check-egress-traffic" = {
-      wantedBy = [ "timers.target" ];
-      timerConfig.OnCalendar = "hourly";
-    };
-
-    services."dump-vnstat-to-serial" = {
-      wantedBy = [ "multi-user.target" ];
-      path = with pkgs; [ vnstat ];
-      script = ''
-        while :; do
-          printf 'VNSTAT;%d;%s\n' "$(date +%s)" "$(vnstat --iface enp7s0 --oneline b)" >/dev/ttyS3
-          sleep 60
-        done
-      '';
-    };
-  };
-
   nix.settings = {
     max-jobs = 1;
     cores = 1;
