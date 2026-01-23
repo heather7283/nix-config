@@ -28,9 +28,12 @@
     python3
   ];
 
-  # https://github.com/systemd/systemd/issues/5356
   systemd.settings.Manager = {
-      StatusUnitFormat = "combined";
+    # https://github.com/systemd/systemd/issues/5356
+    StatusUnitFormat = "combined";
+    # https://michael.stapelberg.ch/posts/2024-01-17-systemd-indefinite-service-restarts/
+    DefaultRestartSec = 1;
+    DefaultStartLimitIntervalSec = 0;
   };
 
   security = {
