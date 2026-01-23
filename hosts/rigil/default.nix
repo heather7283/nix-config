@@ -88,21 +88,23 @@
   systemd.network.enable = true;
   systemd.network.wait-online.enable = false;
   # things I have to do to not flash my VPS' public IP on github :|
-  sops.templates."ens3.network".content = let ip = config.sops.placeholder."ip"; in ''
-    [Match]
-    Name=ens3
+  sops.templates."ens3.network" = {
+    content = let
+      ip = config.sops.placeholder."ip";
+    in ''
+      [Match]
+      Name=ens3
 
-    [Network]
-    Address=${ip}/32
-    Gateway=10.0.0.1
+      [Network]
+      Address=${ip}/32
 
-    [Route]
-    Gateway=10.0.0.1
-    GatewayOnLink=true
-  '';
-  environment.etc."systemd/network/ens3.network" = {
-    source = config.sops.templates."ens3.network".path;
+      [Route]
+      Gateway=10.0.0.1
+      GatewayOnLink=true
+    '';
+    path = "/etc/systemd/network/ens3.network";
     mode = "0644";
+    restartUnits = [ "systemd-networkd.service" ];
   };
 }
 
