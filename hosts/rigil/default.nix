@@ -60,8 +60,6 @@
     # DO NOT USE. Does not work properly with my custom port forwarding rules
     nftables.enable = false;
 
-    enableIPv6 = false;
-
     resolvconf = {
       enable = false;
       useLocalResolver = true;
