@@ -5,7 +5,11 @@
     paths = secrets.paths."${hostname}";
   in {
     secrets = {
-      "ip" = {};
+      "ip/v4/address" = {};
+      "ip/v4/gateway" = {};
+      "ip/v6/address" = {};
+      "ip/v6/gateway" = {};
+
       "users/heather/password" = {
         neededForUsers = true;
       };

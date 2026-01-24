@@ -88,17 +88,21 @@
   # things I have to do to not flash my VPS' public IP on github :|
   sops.templates."ens3.network" = {
     content = let
-      ip = config.sops.placeholder."ip";
+      ph = config.sops.placeholder;
     in ''
       [Match]
       Name=ens3
 
       [Network]
-      Address=${ip}/32
+      Address=${ph."ip/v4/address"}
+      Address=${ph."ip/v6/address"}
 
       [Route]
-      Gateway=10.0.0.1
+      Gateway=${ph."ip/v4/gateway"}
       GatewayOnLink=true
+
+      [Route]
+      Gateway=${ph."ip/v6/gateway"}
     '';
     path = "/etc/systemd/network/ens3.network";
     mode = "0644";
