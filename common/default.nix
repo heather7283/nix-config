@@ -29,6 +29,9 @@
     curl
     rsync
     python3
+
+    # so that ssh doesn't explode
+    foot.terminfo
   ];
 
   systemd.settings.Manager = {
