@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
 
     sops-nix.url = "github:Mic92/sops-nix";
@@ -29,7 +31,7 @@
 
     genHost = hostname: lib.nixosSystem {
       specialArgs = {
-        inherit lib secrets hostname;
+        inherit lib secrets hostname inputs;
       };
       modules = [
         inputs.sops-nix.nixosModules.sops
