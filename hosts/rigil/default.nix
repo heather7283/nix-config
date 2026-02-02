@@ -47,12 +47,6 @@
     tokenFile = config.sops.secrets."giorno/token.txt".path;
   };
 
-  services.ycurator = {
-    enable = true;
-    keyFile = config.sops.secrets."ycurator/authorized_key.json".path;
-    configFile = config.sops.secrets."ycurator/config.json".path;
-  };
-
   networking = {
     useDHCP = false;
     useNetworkd = true;

@@ -37,19 +37,6 @@
         format = "binary";
         restartUnits = [ "giorno.service" ];
       };
-
-      "ycurator/authorized_key.json" = {
-        sopsFile = paths.ycurator."authorized_key.json";
-        key = "";
-        format = "json";
-        restartUnits = [ "ycurator.service" ];
-      };
-      "ycurator/config.json" = {
-        sopsFile = paths.ycurator."config.json";
-        key = "";
-        format = "json";
-        restartUnits = [ "ycurator.service" ];
-      };
     };
   };
 }
