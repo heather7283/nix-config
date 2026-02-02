@@ -122,10 +122,10 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1769962336,
-        "narHash": "sha256-azQ42O5tIg2sbQFgs+BEWeGoiAZPSnVEwJp4nhfsMng=",
+        "lastModified": 1769981890,
+        "narHash": "sha256-eBVYEkmjU4D+WuPLxR2+CktS8kTmuzqxlSgffo7rFYg=",
         "ref": "refs/heads/master",
-        "rev": "beae1ee89d173ed23cc9a66898b483635fba8f62",
+        "rev": "1696f972092407ebdd8b2a0320ae8e31424da620",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/nix-secrets.git"
@@ -194,11 +194,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768685485,
-        "narHash": "sha256-GMETX9xHjxZy1tcFsma2bPUPLouT/rZ0/j8pjet6Ao4=",
+        "lastModified": 1769981823,
+        "narHash": "sha256-cormTqsiJ4afu1kRf0Irhavcb7sHFniRiarF6j8fe30=",
         "ref": "refs/heads/master",
-        "rev": "8dac966eaa6af363a0a39ec830b4298a5e07ba75",
-        "revCount": 41,
+        "rev": "ca2cda6f857947c78c1f854344a2bdacf2df5c69",
+        "revCount": 47,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/ycurator.git"
       },
