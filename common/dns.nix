@@ -9,22 +9,28 @@
         [ "https://dns.google/dns-query" "8.8.8.8" "8.8.4.4" ]
         [ "https://dns.quad9.net/dns-query" "9.9.9.9" "149.112.112.112" ]
       ];
+      hasIPv6 = config.networking.enableIPv6;
     in with builtins; {
       upstreams.groups.default = map (a: head a) nameservers;
       bootstrapDns = map (a: { upstream = head a; ips = tail a; }) nameservers;
 
-      ports.dns = [ "127.0.0.1:53" ];
+      ports.dns = [ "127.0.0.1:53" ] ++ (if hasIPv6 then [ "[::1]:53" ] else []);
 
       hostsFile.sources = [ "/etc/hosts" ];
-
-      connectIPVersion = "v4";
-      filtering.queryTypes = [ "AAAA" ];
 
       caching = {
         cacheTimeNegative = "30m";
         minTime = "30m";
       };
-    };
+
+      log = {
+        level = "warn";
+        timestamp = false;
+      };
+    } // (if hasIPv6 then {} else {
+      connectIPVersion = "v4";
+      filtering.queryTypes = [ "AAAA" ];
+    });
   };
 
   # see https://discourse.nixos.org/t/why-cant-i-get-dns-nameservers-to-stick/59132
@@ -32,5 +38,4 @@
     nameserver 127.0.0.1
   '';
 }
-
 
