@@ -21,12 +21,6 @@
     };
   };
 
-  services.xray = {
-    enable = true;
-    settingsFile = config.sops.secrets."xray-config.jsonc".path;
-  };
-  systemd.services.xray.serviceConfig.LogsDirectory = "xray";
-
   # network usage monitoring
   services.vnstat.enable = true;
 
@@ -67,10 +61,6 @@
       logRefusedConnections = false; # pollutes logs a lot
     };
   };
-  # xray, see https://discourse.nixos.org/t/why-cant-i-get-dns-nameservers-to-stick/59132
-  environment.etc."resolv.conf".text = ''
-    nameserver 127.0.0.1
-  '';
 
   systemd.network.enable = true;
   systemd.network.wait-online.enable = false;

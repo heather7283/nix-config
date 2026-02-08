@@ -25,29 +25,23 @@
         owner = _: { restartUnits = [ "jmusicbot.service" ]; };
       };
 
-      "xray-config.jsonc" = name: {
-        sopsFile = paths."${name}";
-        format = "binary";
-        restartUnits = [ "xray.service" ];
+      xray = {
+        vless-in = {
+          settings = {
+            clients = _: {};
+          };
+          streamSettings = {
+            realitySettings = {
+              dest = _: {};
+              privateKey = _: {};
+              shortIds = _: {};
+            };
+            xhttpSettings = {
+              path = _: {};
+            };
+          };
+        };
       };
-
-      #xray = {
-      #  vless-in = {
-      #    settings = {
-      #      clients = _: {};
-      #    };
-      #    streamSettings = {
-      #      realitySettings = {
-      #        dest = _: {};
-      #        privateKey = _: {};
-      #        shortIds = _: {};
-      #      };
-      #    };
-      #    xhttpSettings = {
-      #      path = _: {};
-      #    };
-      #  };
-      #};
 
       giorno = {
         "config.toml" = _: {
