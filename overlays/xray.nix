@@ -3,7 +3,7 @@
 let
   xray-overlay = final: prev: {
     xray = prev.xray.overrideAttrs (old: rec {
-      version = "26.1.23";
+      version = "26.2.6";
 
       src = prev.fetchFromGitHub {
         owner = "XTLS";
@@ -17,18 +17,18 @@ let
         patch = pkgs.writeTextFile {
           name = "patch.patch";
           text = ''
-diff --git a/go.mod b/go.mod
-index 77d8780c..67c402cc 100644
---- a/go.mod
-+++ b/go.mod
-@@ -1,6 +1,6 @@
- module github.com/xtls/xray-core
+            diff --git a/go.mod b/go.mod
+            index 77d8780c..67c402cc 100644
+            --- a/go.mod
+            +++ b/go.mod
+            @@ -1,6 +1,6 @@
+             module github.com/xtls/xray-core
 
--go 1.25.6
-+go 1.25.5
+            -go 1.25.6
+            +go 1.25.5
 
- require (
-        github.com/apernet/quic-go v0.57.2-0.20260111184307-eec823306178
+             require (
+                    github.com/apernet/quic-go v0.57.2-0.20260111184307-eec823306178
           '';
         };
       in [
