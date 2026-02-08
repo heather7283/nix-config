@@ -36,11 +36,6 @@
 
   services.resolved.enable = lib.mkForce false;
 
-  services.jmusicbot = {
-    enable = true;
-    configFile = config.sops.secrets."jmusicbot-config.txt".path;
-  };
-
   services.giorno = {
     enable = true;
     configFile = config.sops.secrets."giorno/config.toml".path;

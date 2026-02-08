@@ -13,18 +13,20 @@
       "users/heather/password" = {
         neededForUsers = true;
       };
+
       "wireguard/private-key" = {};
+
+      "jmusicbot/token" = {
+        restartUnits = [ "jmusicbot.service" ];
+      };
+      "jmusicbot/owner" = {
+        restartUnits = [ "jmusicbot.service" ];
+      };
 
       "xray-config.jsonc" = {
         sopsFile = paths."xray-config.jsonc";
         format = "binary";
         restartUnits = [ "xray.service" ];
-      };
-
-      "jmusicbot-config.txt" = {
-        sopsFile = paths."jmusicbot-config.txt";
-        format = "binary";
-        restartUnits = [ "jmusicbot.service" ];
       };
 
       "giorno/config.toml" = {
