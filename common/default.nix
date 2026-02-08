@@ -41,8 +41,16 @@
     DefaultStartLimitIntervalSec = 0;
   };
 
+  programs.less.commands = {
+    h = "left-scroll";
+    l = "right-scroll";
+  };
+
   security = {
-    sudo.extraConfig = "Defaults lecture=never";
+    sudo.extraConfig = builtins.concatStringsSep "\n" [
+      "Defaults lecture = never"
+      "Defaults env_keep += \"LESSKEYIN_SYSTEM\"" # make less pick up system lesskey file
+    ];
     loginDefs.settings.FAIL_DELAY = 1;
     pam.services.sudo = {
       nodelay = true;
@@ -54,6 +62,10 @@
   };
 
   environment.etc."inputrc".text = "set editing-mode vi";
+
+  environment.sessionVariables = {
+    LESSSECURE_ALLOW = "lesskey"; # systemd runs less in "secure mode"
+  };
 
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
     # https://wiki.archlinux.org/title/Sysctl#Enable_TCP_Fast_Open
