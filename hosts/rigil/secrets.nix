@@ -4,42 +4,65 @@
   sops = let
     paths = secrets.paths."${hostname}";
   in {
-    secrets = {
-      "ip/v4/address" = {};
-      "ip/v4/gateway" = {};
-      "ip/v6/address" = {};
-      "ip/v6/gateway" = {};
-
-      "users/heather/password" = {
-        neededForUsers = true;
+    secrets = builtins.mapAttrs (k: v: (v k)) (lib.ext.flattenAttrs "/" {
+      ip = {
+        v4 = {
+          address = _: {};
+          gateway = _: {};
+        };
+        v6 = {
+          address = _: {};
+          gateway = _: {};
+        };
       };
 
-      "wireguard/private-key" = {};
+      users.heather.password = _: { neededForUsers = true; };
 
-      "jmusicbot/token" = {
-        restartUnits = [ "jmusicbot.service" ];
-      };
-      "jmusicbot/owner" = {
-        restartUnits = [ "jmusicbot.service" ];
+      wireguard.private-key = _: {};
+
+      jmusicbot = {
+        token = _: { restartUnits = [ "jmusicbot.service" ]; };
+        owner = _: { restartUnits = [ "jmusicbot.service" ]; };
       };
 
-      "xray-config.jsonc" = {
-        sopsFile = paths."xray-config.jsonc";
+      "xray-config.jsonc" = name: {
+        sopsFile = paths."${name}";
         format = "binary";
         restartUnits = [ "xray.service" ];
       };
 
-      "giorno/config.toml" = {
-        sopsFile = paths.giorno."config.toml";
-        format = "binary";
-        restartUnits = [ "giorno.service" ];
+      #xray = {
+      #  vless-in = {
+      #    settings = {
+      #      clients = _: {};
+      #    };
+      #    streamSettings = {
+      #      realitySettings = {
+      #        dest = _: {};
+      #        privateKey = _: {};
+      #        shortIds = _: {};
+      #      };
+      #    };
+      #    xhttpSettings = {
+      #      path = _: {};
+      #    };
+      #  };
+      #};
+
+      giorno = {
+        "config.toml" = _: {
+          sopsFile = paths.giorno."config.toml";
+          format = "binary";
+          restartUnits = [ "giorno.service" ];
+        };
+        "token.txt" = _: {
+          sopsFile = paths.giorno."token.txt";
+          format = "binary";
+          restartUnits = [ "giorno.service" ];
+        };
       };
-      "giorno/token.txt" = {
-        sopsFile = paths.giorno."token.txt";
-        format = "binary";
-        restartUnits = [ "giorno.service" ];
-      };
-    };
+
+    });
   };
 }
 
