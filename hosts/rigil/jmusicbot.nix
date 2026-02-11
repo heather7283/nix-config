@@ -14,6 +14,9 @@
         play = [ p ]
         remove = [ delete ]
       }
+
+      stayinchannel = true
+      alonetimeuntilstop = 300
     '';
     restartUnits = [ "jmusicbot.service" ];
   };
