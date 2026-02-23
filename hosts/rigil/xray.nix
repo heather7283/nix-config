@@ -71,6 +71,21 @@ let
         "inboundTag": [ "vless-in" ],
         "port": 53,
         "outboundTag": "dns-out"
+       },
+       {
+        "ruleTag": "prevent-return-to-russia-ip",
+        "ip": [ "geoip:ru" ],
+        "outboundTag": "block"
+       },
+       {
+        "ruleTag": "prevent-return-to-russia-domain",
+        "domain": [ "geosite:category-ru" ],
+        "outboundTag": "block"
+       },
+       {
+        "ruleTag": "block-bittorrent",
+        "protocol": [ "bittorrent" ],
+        "outboundTag": "block"
        }
       ]
      }
