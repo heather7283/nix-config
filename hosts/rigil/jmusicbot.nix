@@ -22,7 +22,7 @@
   };
 
   virtualisation.oci-containers.containers.jmusicbot = {
-    serviceName = "jmusicbot.service";
+    serviceName = "jmusicbot";
     image = "eclipse-temurin:25-jdk";
     volumes = let
       v = "0.11.0";
