@@ -75,6 +75,8 @@
     net.ipv4.tcp_congestion_control = "bbr";
   };
 
+  virtualisation.oci-containers.backend = "podman";
+
   system.stateVersion = "25.11"; # Do not change
 }
 
