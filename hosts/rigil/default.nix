@@ -12,8 +12,7 @@
 
   services.openssh = {
     enable = true;
-    listenAddresses = [{ addr = "0.0.0.0"; port = 60322; }];
-    # prevents 22 from being opened, must manually open actual port in firewall
+    listenAddresses = [{ addr = "10.200.200.1"; port = 60322; }];
     openFirewall = false;
     settings = {
       PermitRootLogin = "no";
@@ -53,7 +52,6 @@
       trustedInterfaces = [ "awg0" ];
       allowedTCPPorts = [
         443 # https
-        60322 # ssh
       ];
       allowedUDPPorts = [
         51820 # wireguard
