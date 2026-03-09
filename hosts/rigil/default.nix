@@ -30,7 +30,7 @@
   services.resolved.enable = lib.mkForce false;
 
   services.giorno = {
-    enable = true;
+    enable = false;
     configFile = config.sops.secrets."giorno/config.toml".path;
     tokenFile = config.sops.secrets."giorno/token.txt".path;
   };
