@@ -4,17 +4,17 @@
   sops = let
     paths = secrets.paths."${hostname}";
   in {
-    secrets = {
-      "users/heather/password" = {
-        neededForUsers = true;
-      };
-      "wireguard/private-key" = {};
-      "xray-config.jsonc" = {
-        sopsFile = paths."xray-config.jsonc";
+    secrets = builtins.mapAttrs (k: v: lib.ext.split "/" k |> last |> v) (lib.ext.flattenAttrs "/" {
+      users.heather.password = _: { neededForUsers = true; };
+
+      wireguard.private-key = _: {};
+
+      "xray-config.jsonc" = f: {
+        sopsFile = paths."${f}";
         format = "binary";
         restartUnits = [ "xray.service" ];
       };
-    };
+    });
   };
 }
 
