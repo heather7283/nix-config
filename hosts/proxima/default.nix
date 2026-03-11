@@ -32,7 +32,7 @@
   # List services that you want to enable:
   services.openssh = {
     enable = true;
-    listenAddresses = [{ addr = "0.0.0.0"; port = 37643; }];
+    listenAddresses = [{ addr = "10.200.200.41"; port = 37643; }];
     openFirewall = false; # prevent 22 from being opened
     settings = {
       PermitRootLogin = "no";
