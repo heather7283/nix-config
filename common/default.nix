@@ -3,7 +3,7 @@
 {
   imports = lib.ext.getDirImports ./.;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
 
   # passed as an extra argument from flake.nix
   networking.hostName = hostname;
