@@ -8,10 +8,38 @@
 
       wireguard.private-key = _: {};
 
-      "xray-config.jsonc" = p: {
-        sopsFile = lib.getAttrFromPath p paths;
-        format = "binary";
-        restartUnits = [ "xray.service" ];
+      xray = {
+        vless-in = {
+          settings = {
+            clients = _: {};
+          };
+          streamSettings = {
+            realitySettings = {
+              dest = _: {};
+              privateKey = _: {};
+              shortIds = _: {};
+            };
+            xhttpSettings = {
+              path = _: {};
+            };
+          };
+        };
+        vless-out = {
+          settings = {
+            address = _: {};
+            id = _: {};
+          };
+          streamSettings = {
+            realitySettings = {
+              serverName = _: {};
+              publicKey = _: {};
+              shortId = _: {};
+            };
+            xhttpSettings = {
+              path = _: {};
+            };
+          };
+        };
       };
     };
   in {
