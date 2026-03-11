@@ -69,6 +69,7 @@
         publicKey = "i+NTNzzUn9vuRsmfyidoHgWtqKgb73OOQnajCX86b0c=";
         endpoint = "127.0.0.1:51821";
         allowedIPs = [ "10.200.200.0/24" ];
+        persistentKeepalive = 25;
       }];
     };
   };
