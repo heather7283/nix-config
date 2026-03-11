@@ -58,7 +58,7 @@
     nftables.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 443 37643 ];
+      allowedTCPPorts = [ 443 ];
       allowedUDPPorts = [ ];
       logRefusedConnections = false; # pollutes logs a lot
     };
