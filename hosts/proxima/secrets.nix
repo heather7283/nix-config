@@ -3,7 +3,7 @@
 {
   sops = let
     paths = secrets.paths."${hostname}";
-    secrets = {
+    files = {
       users.heather.password = _: { neededForUsers = true; };
 
       wireguard.private-key = _: {};
@@ -17,7 +17,7 @@
   in {
     secrets = builtins.mapAttrs
       (k: v: v <| lib.ext.split "/" k)
-      (lib.ext.flattenAttrs "/" secrets)
+      (lib.ext.flattenAttrs "/" files)
     ;
   };
 }
