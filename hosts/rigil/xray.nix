@@ -102,5 +102,10 @@ in {
     settingsFile = config.sops.templates."xray-config.jsonc".path;
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
+
+  services.logrotate.settings."/var/log/xray/*.log" = {
+    frequency = "daily";
+    copytruncate = true;
+  };
 }
 
