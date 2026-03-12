@@ -16,6 +16,9 @@
 
     giorno.url = "git+ssh://git@github.com/heather7283/giorno.git";
     giorno.inputs.nixpkgs.follows = "nixpkgs";
+
+    ycurator.url = "git+ssh://git@github.com/heather7283/ycurator.git";
+    ycurator.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = {
     self,
@@ -34,6 +37,7 @@
         inputs.sops-nix.nixosModules.sops
         inputs.disko.nixosModules.disko
         inputs.giorno.nixosModules.giorno
+        inputs.ycurator.nixosModules.ycurator
         ./overlays
         ./modules
         ./common

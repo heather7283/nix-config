@@ -38,6 +38,24 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_2"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "giorno": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -98,15 +116,16 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "secrets": "secrets",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "ycurator": "ycurator"
       }
     },
     "secrets": {
       "locked": {
-        "lastModified": 1773276742,
-        "narHash": "sha256-PaguLiOAfwrsMW0OInhcAR40ZpjYGe70tey3DPauGw4=",
+        "lastModified": 1773331728,
+        "narHash": "sha256-YhNPsR5yjJ3CAvNbq51nALrm23huMGYlOi23AJpAKfQ=",
         "ref": "refs/heads/master",
-        "rev": "76a2d66f0c2c1558f0784535c168cdfe69af5ec4",
+        "rev": "d7c9ed53f08feefab7649ccd123a00b6c4722a0a",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/nix-secrets.git"
@@ -150,6 +169,42 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "systems_2": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "ycurator": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773331513,
+        "narHash": "sha256-ZNCUV3TCpoxBj7rimsRoKTTpNR/Ghwfv+DqSzk5DgWI=",
+        "ref": "refs/heads/master",
+        "rev": "052787ffcb3eb2e7267654262114aa88c38c8a40",
+        "revCount": 53,
+        "type": "git",
+        "url": "ssh://git@github.com/heather7283/ycurator.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/heather7283/ycurator.git"
       }
     }
   },

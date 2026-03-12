@@ -4,7 +4,7 @@
   sops = let
     paths = secrets.paths."${hostname}";
   in {
-    secrets = builtins.mapAttrs (k: v: (v k)) (lib.ext.flattenAttrs "/" {
+    secrets = builtins.mapAttrs (k: v: v <| lib.ext.split "/" k) (lib.ext.flattenAttrs "/" {
       ip = {
         v4 = {
           address = _: {};
@@ -49,6 +49,21 @@
           sopsFile = paths.giorno."token.txt";
           format = "binary";
           restartUnits = [ "giorno.service" ];
+        };
+      };
+
+      ycurator = {
+        "config.json" = p: {
+          sopsFile = lib.getAttrFromPath p paths;
+          format = "json";
+          key = "";
+          restartUnits = [ "ycurator.service" ];
+        };
+        "authorized_key.json" = p: {
+          sopsFile = lib.getAttrFromPath p paths;
+          format = "json";
+          key = "";
+          restartUnits = [ "ycurator.service" ];
         };
       };
     });
