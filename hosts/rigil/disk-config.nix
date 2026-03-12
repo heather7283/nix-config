@@ -31,10 +31,13 @@
               type = "btrfs";
               extraArgs = [ "-f" ];
               mountpoint = "/";
-              mountOptions = [
-                "compress=zstd"
-                "noatime"
-              ];
+              mountOptions = [ "compress=zstd" "noatime" ];
+              subvolumes = {
+                "/swap" = {
+                  mountpoint = "/swap";
+                  swap.swapfile.size = "2G";
+                };
+              };
             };
           };
         };
