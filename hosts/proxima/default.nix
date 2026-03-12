@@ -39,6 +39,7 @@
       PasswordAuthentication = false;
     };
   };
+  systemd.services.sshd.requires = [ "sys-devices-virtual-net-wg0.device" ];
 
   # network usage monitoring
   services.vnstat.enable = true;
