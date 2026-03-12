@@ -19,6 +19,8 @@
       PasswordAuthentication = false;
     };
   };
+  # fix sshd starting before wireguard interfce is up
+  systemd.services.sshd.requires = [ "sys-devices-virtual-net-awg0.device" ];
 
   # network usage monitoring
   services.vnstat.enable = true;
