@@ -18,7 +18,7 @@ let
        "port": 443,
        "settings": {
         "clients": ${ph."xray/vless-in/settings/clients"},
-        "decryption": "none"
+        "decryption": "${ph."xray/vless-in/settings/decryption"}"
        },
        "streamSettings": {
         "network": "xhttp",

@@ -12,6 +12,7 @@
         vless-in = {
           settings = {
             clients = _: {};
+            decryption = _: {};
           };
           streamSettings = {
             realitySettings = {
