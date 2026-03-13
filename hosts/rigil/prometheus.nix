@@ -40,19 +40,30 @@
 
     provision = {
       enable = true;
-      datasources.settings.datasources = [
-        {
-          name = "Prometheus";
-          type = "prometheus";
-          url = let
-            inherit (config.services.prometheus) listenAddress port;
-          in
-            "http://${listenAddress}:${toString port}"
-          ;
-          isDefault = true;
-          editable = false;
-        }
-      ];
+      datasources.settings = {
+        prune = true;
+        datasources = [
+          {
+            name = "Prometheus";
+            type = "prometheus";
+            url = let
+              inherit (config.services.prometheus) listenAddress port;
+            in
+              "http://${listenAddress}:${toString port}"
+            ;
+            isDefault = true;
+            editable = false;
+          }
+        ];
+      };
+
+      dashboards.settings.providers = [{
+        name = "Provisioned dashboards";
+        disableDeletion = true;
+        options = {
+          path = "/etc/grafana-dashboards";
+        };
+      }];
     };
   };
   systemd.services.grafana.requires = [ "sys-devices-virtual-net-awg0.device" ];
