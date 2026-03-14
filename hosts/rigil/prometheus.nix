@@ -35,6 +35,7 @@
       server = {
         http_addr = "10.200.200.1";
         http_port = 3000;
+        enable_gzip = true;
       };
       security = {
         admin_user = "heather";
