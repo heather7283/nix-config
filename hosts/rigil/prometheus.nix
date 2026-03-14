@@ -36,6 +36,13 @@
         http_addr = "10.200.200.1";
         http_port = 3000;
       };
+      security = {
+        admin_user = "heather";
+        # For system services the path may also be referenced as "/run/credentials/UNITNAME"
+        # in cases where no interpolation is possible, e.g. configuration files of software
+        # that does not yet support credentials natively.
+        admin_password = "$__file{/run/credentials/grafana.service/admin_password}";
+      };
     };
 
     provision = {
@@ -66,6 +73,13 @@
       }];
     };
   };
-  systemd.services.grafana.requires = [ "sys-devices-virtual-net-awg0.device" ];
+  systemd.services.grafana = {
+    # grafana listens on 10.200.200.1
+    requires = [ "sys-devices-virtual-net-awg0.device" ];
+    # pass admin password from sops
+    serviceConfig.LoadCredential = [
+      "admin_password:${config.sops.secrets."grafana/admin_password".path}"
+    ];
+  };
 }
 

@@ -14,6 +14,8 @@
 
       users.heather.password = _: { neededForUsers = true; };
 
+      grafana.admin_password = _: {};
+
       wireguard.private-key = _: {};
 
       jmusicbot = {
