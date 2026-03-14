@@ -92,7 +92,7 @@ in {
   services.blocky.settings.ports.dns = [ "10.200.200.1:53" ];
 
   # DO NOT USE NIXOS' BUILTIN NAT AND PORT FORWARDING OPTIONS!!!
-  # They do NOT work how I want. I spent 2 hours fighting it in the past.
+  # They do NOT work how I want. I spent 7 hours fighting it in the past.
   # Do not repeat this mistake, just don't bother with this shit,
   # you have iptables, they work, DO NOT FIX WHAT IS NOT BROKEN.
   #networking.nat = {
