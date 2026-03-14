@@ -15,7 +15,7 @@
     };
 
     globalConfig = {
-      scrape_interval = "1m";
+      scrape_interval = "10s";
     };
     scrapeConfigs = let
       inherit (config.services.prometheus) exporters;

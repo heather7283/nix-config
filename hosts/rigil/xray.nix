@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   ph = config.sops.placeholder;
@@ -15,6 +15,26 @@ let
       "loglevel": "error",
       "access": "/var/log/xray/access.log",
       "error": "/var/log/xray/error.log"
+     },
+     "api": {
+      "tag": "api-out",
+      "services": [ "StatsService" ]
+     },
+     "stats": {
+     },
+     "policy": {
+      "levels": {
+       "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+       }
+      },
+      "system": {
+       "statsInboundUplink": true,
+       "statsInboundDownlink": true,
+       "statsOutboundUplink": true,
+       "statsOutboundDownlink": true
+      }
      },
      "inbounds": [
       {
@@ -44,6 +64,13 @@ let
         "destOverride": [ "http", "tls", "quic" ],
         "routeOnly": true
        }
+      },
+      {
+       "tag": "api-in",
+       "protocol": "dokodemo-door",
+       "listen": "127.0.0.1",
+       "port": 54321,
+       "settings": { "address": "127.0.0.1" }
       }
      ],
      "outbounds": [
@@ -86,6 +113,11 @@ let
         "ruleTag": "block-bittorrent",
         "protocol": [ "bittorrent" ],
         "outboundTag": "block"
+       },
+       {
+        "ruleTag": "api",
+        "inboundTag": [ "api-in" ],
+        "outboundTag": "api-out"
        }
       ]
      }
@@ -101,11 +133,33 @@ in {
     enable = true;
     settingsFile = config.sops.templates."xray-config.jsonc".path;
   };
-  systemd.services.xray.serviceConfig.LogsDirectory = "xray";
+  systemd.services.xray = {
+    # make sure /var/log/xray exists
+    serviceConfig.LogsDirectory = "xray";
+  };
 
+  # I once had xray logs grow to 1 gig so yeah better set this up
   services.logrotate.settings."/var/log/xray/*.log" = {
     frequency = "daily";
     copytruncate = true;
+  };
+
+  services.prometheus = let
+    listenAddress = "127.0.0.1";
+    port = 9092;
+  in {
+    exporters.v2ray = {
+      enable = true;
+      inherit listenAddress port;
+      v2rayEndpoint = "127.0.0.1:54321";
+    };
+    scrapeConfigs = [{
+      job_name = "v2ray";
+      metrics_path = "/scrape";
+      static_configs = [{
+        targets = [ "${listenAddress}:${toString port}" ];
+      }];
+    }];
   };
 }
 
