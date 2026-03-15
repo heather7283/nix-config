@@ -24,7 +24,10 @@
       {
         job_name = "node";
         static_configs = [{
-          targets = [ "${exporters.node.listenAddress}:${toString exporters.node.port}" ];
+          targets = [
+            "${exporters.node.listenAddress}:${toString exporters.node.port}" # rigil
+            "10.200.200.41:9091" # proxima
+          ];
         }];
       }
       {
