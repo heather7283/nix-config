@@ -27,6 +27,16 @@
           targets = [ "${exporters.node.listenAddress}:${toString exporters.node.port}" ];
         }];
       }
+      {
+        job_name = "v2ray";
+        metrics_path = "/scrape";
+        static_configs = [{
+          targets = [
+            "${exporters.v2ray.listenAddress}:${toString exporters.v2ray.port}" # rigil
+            "10.200.200.41:9092" # proxima
+          ];
+        }];
+      }
     ];
   };
 

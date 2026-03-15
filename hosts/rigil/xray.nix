@@ -146,22 +146,11 @@ in {
     copytruncate = true;
   };
 
-  services.prometheus = let
+  services.prometheus.exporters.v2ray = {
+    enable = true;
     listenAddress = "127.0.0.1";
     port = 9092;
-  in {
-    exporters.v2ray = {
-      enable = true;
-      inherit listenAddress port;
-      v2rayEndpoint = "127.0.0.1:54321";
-    };
-    scrapeConfigs = [{
-      job_name = "v2ray";
-      metrics_path = "/scrape";
-      static_configs = [{
-        targets = [ "${listenAddress}:${toString port}" ];
-      }];
-    }];
+    v2rayEndpoint = "127.0.0.1:54321";
   };
 }
 
