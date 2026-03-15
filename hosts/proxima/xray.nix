@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 let
   ph = config.sops.placeholder;
@@ -126,6 +126,7 @@ in {
   services.xray = {
     enable = true;
     settingsFile = config.sops.templates."xray-config.jsonc".path;
+    package = pkgs.unstable.xray;
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
 
