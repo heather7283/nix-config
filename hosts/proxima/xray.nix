@@ -10,6 +10,26 @@ let
       "access": "/var/log/xray/access.log",
       "error": "/var/log/xray/error.log"
      },
+     "api": {
+      "tag": "api-out",
+      "services": [ "StatsService" ]
+     },
+     "stats": {
+     },
+     "policy": {
+      "levels": {
+       "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+       }
+      },
+      "system": {
+       "statsInboundUplink": true,
+       "statsInboundDownlink": true,
+       "statsOutboundUplink": true,
+       "statsOutboundDownlink": true
+      }
+     },
      "inbounds": [
       {
        "tag": "vless-in",
@@ -49,6 +69,13 @@ let
         "port": 51820,
         "network": "udp"
        }
+      },
+      {
+       "tag": "api-in",
+       "protocol": "dokodemo-door",
+       "listen": "127.0.0.1",
+       "port": 54321,
+       "settings": { "address": "127.0.0.1" }
       }
      ],
      "outbounds": [
@@ -112,6 +139,11 @@ let
        {
         "protocol": [ "bittorrent" ],
         "outboundTag": "block"
+       },
+       {
+        "ruleTag": "api",
+        "inboundTag": [ "api-in" ],
+        "outboundTag": "api-out"
        }
       ]
      }
@@ -134,5 +166,13 @@ in {
     frequency = "daily";
     copytruncate = true;
   };
+
+  services.prometheus.exporters.v2ray = {
+    enable = true;
+    listenAddress = "10.200.200.41";
+    port = 9092;
+    v2rayEndpoint = "127.0.0.1:54321";
+  };
+  systemd.services.prometheus-v2ray-exporter.requires = [ "sys-devices-virtual-net-wg0.device" ];
 }
 
