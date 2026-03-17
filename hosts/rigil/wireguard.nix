@@ -52,6 +52,7 @@ in {
         (mkWgPeer "KIRAwgVP50u4P2jqBisGSqoZ4nQpfaKJ5HyvmuvdQ10=" "10.200.200.198") # kir windows
         (mkWgPeer "kIRLBInjS/jHm11QMI55IEUV0wxewBwXgDnD6Uja0zk=" "10.200.200.199") # kir laptop
         (mkWgPeer "YAnDnt7Nebfdsdts2ugHZHUo2hmqL0pD//jpb9zwPmQ=" "10.200.200.41") # proxima
+        (mkWgPeer "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=" "10.200.200.50") # pluto
       ];
       rules = [
         { ip = "10.200.200.2"; outer = 8000; protos = [ "tcp" ]; } # python's http server
