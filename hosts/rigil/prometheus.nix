@@ -27,6 +27,7 @@
           targets = [
             "${exporters.node.listenAddress}:${toString exporters.node.port}" # rigil
             "10.200.200.41:9091" # proxima
+            "10.200.200.50:9091" # pluto
           ];
         }];
       }
@@ -37,6 +38,7 @@
           targets = [
             "${exporters.v2ray.listenAddress}:${toString exporters.v2ray.port}" # rigil
             "10.200.200.41:9092" # proxima
+            "10.200.200.50:9092" # pluto
           ];
         }];
       }
