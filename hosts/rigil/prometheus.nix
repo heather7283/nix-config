@@ -18,29 +18,27 @@
     globalConfig = {
       scrape_interval = "10s";
     };
-    scrapeConfigs = let
-      inherit (config.services.prometheus) exporters;
-    in [
+    scrapeConfigs = with builtins; let
+      instances = {
+        "127.0.0.1" = "rigil";
+        "10.200.200.41" = "proxima";
+        "10.200.200.50" = "pluto";
+      };
+      relabel_configs = attrNames instances |> map (ip: {
+        source_labels = [ "__address__" ];
+        target_label = "instance";
+        regex = "${ip}:[0-9]+";
+        replacement = getAttr ip instances;
+      });
+    in map (e: { inherit relabel_configs; } // e) [
       {
         job_name = "node";
-        static_configs = [{
-          targets = [
-            "${exporters.node.listenAddress}:${toString exporters.node.port}" # rigil
-            "10.200.200.41:9091" # proxima
-            "10.200.200.50:9091" # pluto
-          ];
-        }];
+        static_configs = [{ targets = attrNames instances |> map (ip: "${ip}:9091"); }];
       }
       {
         job_name = "v2ray";
         metrics_path = "/scrape";
-        static_configs = [{
-          targets = [
-            "${exporters.v2ray.listenAddress}:${toString exporters.v2ray.port}" # rigil
-            "10.200.200.41:9092" # proxima
-            "10.200.200.50:9092" # pluto
-          ];
-        }];
+        static_configs = [{ targets = attrNames instances |> map (ip: "${ip}:9092"); }];
       }
     ];
   };
