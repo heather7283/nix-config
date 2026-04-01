@@ -36,12 +36,9 @@ in {
     net.ipv4.conf.all.route_localnet = 1;
   };
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [ amneziawg ];
-  boot.kernelModules = [ "amneziawg" ];
-
   networking.wireguard = {
     useNetworkd = false;
-    interfaces.awg0 = let
+    interfaces.wg0 = let
       peers = [
         (mkWgPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" "10.200.200.2") # fa506ih
         (mkWgPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" "10.200.200.10") # qblue
@@ -57,30 +54,20 @@ in {
         { ip = "10.200.200.198"; outer = 26639; protos = [ "tcp" ]; } # kir's comfy ui
       ];
     in {
-      type = "amneziawg";
       ips = [ "10.200.200.1/24" ];
       listenPort = 51820;
       privateKeyFile = config.sops.secrets."wireguard/private-key".path;
       peers = peers;
       postSetup = lib.concatLines ((wrapIptables [
-        "-I FORWARD -i awg0 -j ACCEPT"
-        "-I FORWARD -o awg0 -j ACCEPT"
+        "-I FORWARD -i wg0 -j ACCEPT"
+        "-I FORWARD -o wg0 -j ACCEPT"
         "-t nat -I POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
       ]) ++ (mkWgForwardRules "up" rules));
       preShutdown = lib.concatLines ((wrapIptables [
-        "-D FORWARD -i awg0 -j ACCEPT"
-        "-D FORWARD -o awg0 -j ACCEPT"
+        "-D FORWARD -i wg0 -j ACCEPT"
+        "-D FORWARD -o wg0 -j ACCEPT"
         "-t nat -D POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
       ]) ++ (mkWgForwardRules "down" rules));
-      extraOptions = {
-        Jc = 2;
-        Jmin = 40;
-        Jmax = 70;
-        H1 = 1;
-        H2 = 2;
-        H3 = 3;
-        H4 = 4;
-      };
     };
   };
 
@@ -93,7 +80,7 @@ in {
   # you have iptables, they work, DO NOT FIX WHAT IS NOT BROKEN.
   #networking.nat = {
   #  enable = true;
-  #  internalInterfaces = [ "awg0" ];
+  #  internalInterfaces = [ "wg0" ];
   #  internalIPs = [ "10.200.200.0/24" ];
   #  externalInterface = "ens3";
   #  externalIP = "62.109.25.255";

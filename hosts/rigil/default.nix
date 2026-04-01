@@ -20,7 +20,7 @@
     };
   };
   # fix sshd starting before wireguard interfce is up
-  systemd.services.sshd.requires = [ "sys-devices-virtual-net-awg0.device" ];
+  systemd.services.sshd.requires = [ "sys-devices-virtual-net-wg0.device" ];
 
   # network usage monitoring
   services.vnstat.enable = true;
@@ -57,7 +57,7 @@
 
     firewall = {
       enable = true;
-      trustedInterfaces = [ "awg0" ];
+      trustedInterfaces = [ "wg0" ];
       allowedTCPPorts = [
         443 # https
       ];
