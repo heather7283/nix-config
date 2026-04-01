@@ -62,7 +62,6 @@
         443 # https
       ];
       allowedUDPPorts = [
-        51820 # wireguard
       ];
       logRefusedConnections = false; # pollutes logs a lot
     };
