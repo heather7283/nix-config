@@ -94,7 +94,24 @@ let
       "domainStrategy": "IPIfNonMatch",
       "rules": [
        {
-        "ruleTag": "vless-in-force-redirect-dns",
+        "ruleTag": "api",
+        "inboundTag": [ "api-in" ],
+        "outboundTag": "api-out"
+       },
+       {
+        "ruleTag": "wireguard",
+        "inboundTag": [ "vless-in" ],
+        "ip": [ "127.0.0.1" ],
+        "port": 51820,
+        "outboundTag": "direct-out"
+       },
+       {
+        "ruleTag": "block-private-ips",
+        "ip": [ "geoip:private" ],
+        "outboundTag": "block"
+       },
+       {
+        "ruleTag": "hijack-dns",
         "inboundTag": [ "vless-in" ],
         "port": 53,
         "outboundTag": "dns-out"
@@ -113,11 +130,6 @@ let
         "ruleTag": "block-bittorrent",
         "protocol": [ "bittorrent" ],
         "outboundTag": "block"
-       },
-       {
-        "ruleTag": "api",
-        "inboundTag": [ "api-in" ],
-        "outboundTag": "api-out"
        }
       ]
      }
