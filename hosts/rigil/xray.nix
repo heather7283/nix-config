@@ -106,6 +106,13 @@ let
         "outboundTag": "direct-out"
        },
        {
+        "ruleTag": "pysix-wireguard-hack",
+        "inboundTag": [ "vless-in" ],
+        "ip": [ "10.200.200.0/24" ],
+        "user": [ "pyxis@localhost" ],
+        "outboundTag": "direct-out"
+       },
+       {
         "ruleTag": "block-private-ips",
         "ip": [ "geoip:private" ],
         "outboundTag": "block"
