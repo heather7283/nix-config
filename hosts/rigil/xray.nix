@@ -12,7 +12,7 @@ let
   xrayConfig = ''
     {
      "log": {
-      "loglevel": "error",
+      "loglevel": "info",
       "access": "/var/log/xray/access.log",
       "error": "/var/log/xray/error.log"
      },
@@ -156,6 +156,7 @@ in {
   services.logrotate.settings."/var/log/xray/*.log" = {
     frequency = "daily";
     copytruncate = true;
+    compress = true;
   };
 
   services.prometheus.exporters.v2ray = {
