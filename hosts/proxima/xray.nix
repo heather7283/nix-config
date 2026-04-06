@@ -121,29 +121,38 @@ let
       "domainStrategy": "IPIfNonMatch",
       "rules": [
        {
-        "domain": [ "geosite:category-ru", "domain:chutes.ai", "domain:openrouter.ai" ],
-        "outboundTag": "direct-out"
+        "ruleTag": "api",
+        "inboundTag": [ "api-in" ],
+        "outboundTag": "api-out"
        },
        {
-        "ip": [ "geoip:ru" ],
-        "outboundTag": "direct-out"
-       },
-       {
-        "port": "53",
-        "outboundTag": "dns-out"
-       },
-       {
+        "ruleTag": "wireguard",
         "inboundTag": [ "wireguard-in" ],
         "outboundTag": "vless-out"
        },
        {
-        "protocol": [ "bittorrent" ],
-        "outboundTag": "block"
+        "ruleTag": "hijack-dns",
+        "inboundTag": [ "vless-in" ],
+        "port": "53",
+        "outboundTag": "dns-out"
        },
        {
-        "ruleTag": "api",
-        "inboundTag": [ "api-in" ],
-        "outboundTag": "api-out"
+        "ruleTag": "forward-to-pluto",
+        "inboundTag": [ "vless-in" ],
+        "vlessRoute": 1,
+        "outboundTag": "pluto-out"
+       },
+       {
+        "ruleTag": "russian-domains",
+        "inboundTag": [ "vless-in" ],
+        "domain": [ "geosite:category-ru", "domain:chutes.ai", "domain:openrouter.ai" ],
+        "outboundTag": "direct-out"
+       },
+       {
+        "ruleTag": "russian-ips",
+        "inboundTag": [ "vless-in" ],
+        "ip": [ "geoip:ru" ],
+        "outboundTag": "direct-out"
        }
       ]
      }
