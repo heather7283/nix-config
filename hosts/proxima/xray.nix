@@ -107,9 +107,9 @@ let
       },
       {
        "tag": "dns-out",
-       "protocol": "dns",
+       "protocol": "freedom",
        "settings": {
-        "nonIPQuery": "drop"
+        "redirect": "127.0.0.1:53"
        }
       },
       {
