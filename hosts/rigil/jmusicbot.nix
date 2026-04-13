@@ -23,7 +23,7 @@
 
   virtualisation.oci-containers.containers.jmusicbot = {
     serviceName = "jmusicbot";
-    image = "eclipse-temurin:25-jdk";
+    image = "eclipse-temurin:25-jre";
     volumes = let
       jar = pkgs.ext.fetchGitHubRelease rec {
         owner = "Cosgy-Dev";
