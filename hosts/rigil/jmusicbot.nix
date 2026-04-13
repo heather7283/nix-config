@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # see https://jmusicbot.com/config/
@@ -25,10 +25,11 @@
     serviceName = "jmusicbot";
     image = "eclipse-temurin:25-jdk";
     volumes = let
-      v = "0.11.0";
-      jar = pkgs.fetchurl {
-        url =
-          "https://github.com/Cosgy-Dev/JMusicBot-JP/releases/download/${v}/JMusicBot-${v}-All.jar";
+      jar = pkgs.ext.fetchGitHubRelease rec {
+        owner = "Cosgy-Dev";
+        repo = "JMusicBot-JP";
+        tag = "0.11.0";
+        asset = "JMusicBot-${tag}-All.jar";
         sha256 = "sha256-cVlugGrTLGO7YdaT8Ywx2kaNqcKEPUMR/yjF6HetyMk=";
       };
       cfg = config.sops.templates."jmusicbot_config.txt".path;
