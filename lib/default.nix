@@ -1,13 +1,15 @@
 { lib }:
 
 with builtins; let
-  getDirImports = dir: map
-    (file: "${dir}/${file}")
-    (attrNames (removeAttrs (readDir dir) [ "default.nix" ]))
+  getDirImports = dir: readDir dir
+    |> attrNames
+    |> filter (file: file != "default.nix")
+    |> sort (a: b: a < b)
+    |> map (file: "${dir}/${file}")
   ;
 in {
   ext = {
     inherit getDirImports;
-  } // foldl' (acc: f: acc // (import f { inherit lib; })) {} (getDirImports ./.);
+  } // foldl' (acc: file: acc // (import file { inherit lib; })) {} (getDirImports ./.);
 }
 
