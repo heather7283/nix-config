@@ -20,12 +20,7 @@
     ycurator.url = "git+ssh://git@github.com/heather7283/ycurator.git";
     ycurator.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = {
-    self,
-    nixpkgs,
-    secrets,
-    ...
-  } @ inputs: let
+  outputs = { nixpkgs, secrets, ... }@inputs: let
     # extend lib with custom functions from ./lib directory
     lib = nixpkgs.lib // import ./lib { inherit (nixpkgs) lib; };
 
@@ -45,7 +40,7 @@
       ];
     };
   in with builtins; {
-    nixosConfigurations = mapAttrs (host: _: genHost host) (readDir ./hosts);
+    nixosConfigurations = readDir ./hosts |> mapAttrs (host: _: genHost host);
   };
 }
 
