@@ -1,3 +1,5 @@
+{ ... }:
+
 final: prev: {
   unstable.xray = prev.unstable.xray.overrideAttrs (old: rec {
     version = "26.3.27";

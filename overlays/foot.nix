@@ -1,3 +1,5 @@
+{ ... }:
+
 final: prev: {
   foot = prev.foot.overrideAttrs (old: {
     # install foot's own terminfo files as foot-{,direct-}extra as on other distros
