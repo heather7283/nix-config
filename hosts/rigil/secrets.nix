@@ -68,6 +68,18 @@
           restartUnits = [ "ycurator.service" ];
         };
       };
+
+      warp = {
+        "reg.json" = p: {
+          sopsFile = lib.getAttrFromPath p paths;
+          format = "json";
+          key = "";
+          owner = "cloudflare-warp";
+          group = "cloudflare-warp";
+          path = "/var/lib/cloudflare-warp/reg.json";
+          restartUnits = [ "cloudflare-warp.service" ];
+        };
+      };
     });
   };
 }
