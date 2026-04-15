@@ -79,6 +79,14 @@ let
        "protocol": "freedom"
       },
       {
+       "tag": "warp-out",
+       "protocol": "socks",
+       "settings": {
+        "address": "127.0.0.1",
+        "port": 10809
+       }
+      },
+      {
        "tag": "dns-out",
        "protocol": "dns",
        "settings": {
@@ -118,6 +126,11 @@ let
         "outboundTag": "block"
        },
        {
+        "ruleTag": "block-bittorrent",
+        "protocol": [ "bittorrent" ],
+        "outboundTag": "block"
+       },
+       {
         "ruleTag": "hijack-dns",
         "inboundTag": [ "vless-in" ],
         "port": 53,
@@ -134,9 +147,9 @@ let
         "outboundTag": "block"
        },
        {
-        "ruleTag": "block-bittorrent",
-        "protocol": [ "bittorrent" ],
-        "outboundTag": "block"
+        "ruleTag": "vless-route-0001-warp",
+        "vlessRoute": 1,
+        "outboundTag": "warp-out"
        }
       ]
      }
