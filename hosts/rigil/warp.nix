@@ -42,6 +42,7 @@
       ExecStart = "${pkgs.cloudflare-warp}/bin/warp-svc";
       Restart = "always";
       RestartSec = 5;
+      LogLevelMax = "warning";
 
       User = "cloudflare-warp";
       Group = "cloudflare-warp";
