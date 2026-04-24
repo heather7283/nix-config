@@ -1,9 +1,29 @@
+diff --git a/.gitignore b/.gitignore
+index ec2f56642..b25fb4512 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -153,5 +153,15 @@ Src/Zle/widgets.list
+ Src/Zle/zle_things.h
+ Src/Zle/zle_widget.h
+ 
++Src/SqliteHistory/Makefile.in
++Src/SqliteHistory/*.export
++Src/SqliteHistory/*.pro
++Src/SqliteHistory/*.epro
++Src/SqliteHistory/*.syms
++Src/SqliteHistory/*.mdh
++Src/SqliteHistory/*.mdhi
++Src/SqliteHistory/*.mdhs
++Src/SqliteHistory/*.mdh.tmp
++
+ Test/*.tmp
+ /.project
 diff --git a/Src/SqliteHistory/sqlite_history.c b/Src/SqliteHistory/sqlite_history.c
 new file mode 100644
-index 000000000..075350124
+index 000000000..ed27cae5d
 --- /dev/null
 +++ b/Src/SqliteHistory/sqlite_history.c
-@@ -0,0 +1,404 @@
+@@ -0,0 +1,411 @@
 +#include "sqlite_history.mdh"
 +#include "sqlite_history.pro"
 +
@@ -16,7 +36,7 @@ index 000000000..075350124
 +#define ERROR(msg, ...) \
 +    fprintf(stderr, "sqlite_history: " msg "\n", ##__VA_ARGS__)
 +
-+#define DB_VERSION 1
++#define DB_VERSION 2
 +
 +static struct {
 +    sqlite3 *db;
@@ -179,10 +199,16 @@ index 000000000..075350124
 +        "    finished_at INTEGER NOT NULL CHECK ( finished_at >= started_at ),\n"
 +        "\n"
 +        "    FOREIGN KEY ( session_id ) REFERENCES sessions ( id ) ON DELETE CASCADE\n"
-+        ");\n"
++        ");\n",
++        /* db version 2 - add index on started_at for faster listing */
++        "CREATE INDEX idx_commands_started_at ON commands ( started_at );\n",
 +    };
 +
-+    while (version != DB_VERSION) {
++    if (version > DB_VERSION) {
++        ERROR("db has version %d while this zsh build only supports up to %d",
++              version, DB_VERSION);
++        return false;
++    } else while (version < DB_VERSION) {
 +        INFO("sqlite_history: migration %d -> %d", version, version + 1);
 +        if (!exec(migrations[version]) || !set_user_version(++version)) {
 +            return false;
@@ -299,15 +325,16 @@ index 000000000..075350124
 +static int
 +sqlite_history_list(char *nam, char **args, Options ops, UNUSED(int func))
 +{
-+    static const char sql[] =
-+        "SELECT command FROM commands ORDER BY started_at ASC;"
-+    ;
-+
 +    const char sep = OPT_ISSET(ops, 'z') ? '\0' : '\n';
++    const char *const order = OPT_ISSET(ops, 'r') ? "DESC" : "ASC";
 +    int ret = 0;
 +    struct sqlite3_stmt *stmt = NULL;
 +
-+    stmt = prepare(sql);
++    char buf[55];
++    snprintf(buf, sizeof(buf),
++             "SELECT command FROM commands ORDER BY started_at %s;", order);
++
++    stmt = prepare(buf);
 +    if (!stmt) {
 +        ret = 1;
 +        goto out;
@@ -343,7 +370,7 @@ index 000000000..075350124
 +    BUILTIN("sqlite_history_open", 0, sqlite_history_open, 1, 1, 0, "v", NULL),
 +    BUILTIN("sqlite_history_close", 0, sqlite_history_close, 0, 0, 0, "", NULL),
 +    BUILTIN("sqlite_history_save", 0, sqlite_history_save, 0, 0, 0, "", NULL),
-+    BUILTIN("sqlite_history_list", 0, sqlite_history_list, 0, 0, 0, "z", NULL),
++    BUILTIN("sqlite_history_list", 0, sqlite_history_list, 0, 0, 0, "zr", NULL),
 +};
 +
 +static struct features module_features = {
