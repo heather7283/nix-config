@@ -1,0 +1,29 @@
+From a1e688f0c69cb428c8545804196b6f61e8db7e90 Mon Sep 17 00:00:00 2001
+From: heather7283 <heather7283@protonmail.com>
+Date: Sat, 25 Apr 2026 23:58:09 +0400
+Subject: [PATCH] Revert "VLESS Reverse Proxy: Forbid reverse-proxy UUID using
+ forward-proxy, enabled by default"
+
+This reverts commit a83253f3d7a4d423d2bfdf522205daacd8ee868e.
+---
+ proxy/vless/inbound/inbound.go | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/proxy/vless/inbound/inbound.go b/proxy/vless/inbound/inbound.go
+index 02dc947d..fc2a2449 100644
+--- a/proxy/vless/inbound/inbound.go
++++ b/proxy/vless/inbound/inbound.go
+@@ -539,10 +539,6 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection s
+ 
+ 	account := request.User.Account.(*vless.MemoryAccount)
+ 
+-	if account.Reverse != nil && request.Command != protocol.RequestCommandRvs {
+-		return errors.New("for safety reasons, user " + account.ID.String() + " is not allowed to use forward proxy")
+-	}
+-
+ 	responseAddons := &encoding.Addons{
+ 		// Flow: requestAddons.Flow,
+ 	}
+-- 
+2.54.0
+
