@@ -25,22 +25,6 @@
             };
           };
         };
-        vless-out = {
-          settings = {
-            address = _: {};
-            id = _: {};
-          };
-          streamSettings = {
-            realitySettings = {
-              serverName = _: {};
-              publicKey = _: {};
-              shortId = _: {};
-            };
-            xhttpSettings = {
-              path = _: {};
-            };
-          };
-        };
       };
     };
   in {

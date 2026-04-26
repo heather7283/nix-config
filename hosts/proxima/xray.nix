@@ -80,26 +80,8 @@ let
      ],
      "outbounds": [
       {
-       "tag": "vless-out",
-       "protocol": "vless",
-       "settings": {
-        "address": "${ph."xray/vless-out/settings/address"}",
-        "port": 443,
-        "id": "${ph."xray/vless-out/settings/id"}",
-        "encryption": "none"
-       },
-       "streamSettings": {
-        "network": "xhttp",
-        "security": "reality",
-        "realitySettings": {
-         "serverName": "${ph."xray/vless-out/streamSettings/realitySettings/serverName"}",
-         "publicKey": "${ph."xray/vless-out/streamSettings/realitySettings/publicKey"}",
-         "shortId": "${ph."xray/vless-out/streamSettings/realitySettings/shortId"}"
-        },
-        "xhttpSettings": {
-         "path": "${ph."xray/vless-out/streamSettings/xhttpSettings/path"}"
-        }
-       }
+       "tag": "block",
+       "protocol": "blackhole"
       },
       {
        "tag": "direct-out",
@@ -111,10 +93,6 @@ let
        "settings": {
         "redirect": "127.0.0.1:53"
        }
-      },
-      {
-       "tag": "block",
-       "protocol": "blackhole"
       }
      ],
      "routing": {
@@ -151,20 +129,7 @@ let
        {
         "ruleTag": "forward-to-pluto",
         "inboundTag": [ "vless-in" ],
-        "vlessRoute": 1,
         "outboundTag": "pluto-out"
-       },
-       {
-        "ruleTag": "russian-domains",
-        "inboundTag": [ "vless-in" ],
-        "domain": [ "geosite:category-ru", "domain:chutes.ai", "domain:openrouter.ai" ],
-        "outboundTag": "direct-out"
-       },
-       {
-        "ruleTag": "russian-ips",
-        "inboundTag": [ "vless-in" ],
-        "ip": [ "geoip:ru" ],
-        "outboundTag": "direct-out"
        }
       ]
      }
