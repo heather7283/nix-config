@@ -6,7 +6,7 @@ let
   xrayConfig = ''
     {
      "log": {
-      "loglevel": "error",
+      "loglevel": "debug",
       "access": "/var/log/xray/access.log",
       "error": "/var/log/xray/error.log"
      },
@@ -126,9 +126,21 @@ let
         "outboundTag": "api-out"
        },
        {
-        "ruleTag": "wireguard",
+        "ruleTag": "wireguard-out",
         "inboundTag": [ "wireguard-in" ],
         "outboundTag": "vless-out"
+       },
+       {
+        "ruleTag": "wireguard-in",
+        "inboundTag": [ "vless-in" ],
+        "ip": [ "127.0.0.1" ],
+        "port": 51820,
+        "outboundTag": "direct-out"
+       },
+       {
+        "ruleTag": "block-private-ips",
+        "ip": [ "geoip:private" ],
+        "outboundTag": "block"
        },
        {
         "ruleTag": "hijack-dns",

@@ -26,8 +26,6 @@ with builtins; let
     (rule: concatMap (proto: mkWgForwardRule cmd rule.ip rule.outer rule.inner proto) rule.protos)
     (map (rule: rule // (if rule?inner then {} else { inner = rule.outer; })) rules)
   ;
-
-  mkWgPeer = key: ip: { publicKey = key; allowedIPs = [ "${ip}/32" ]; };
 in {
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
     # DO NOT REMOVE, needed for wireguard port forwarding
@@ -40,21 +38,31 @@ in {
     useNetworkd = false;
     interfaces.wg0 = let
       peers = [
-        (mkWgPeer "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=" "10.200.200.2") # fa506ih
-        (mkWgPeer "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=" "10.200.200.10") # qblue
-        (mkWgPeer "KIRAwgVP50u4P2jqBisGSqoZ4nQpfaKJ5HyvmuvdQ10=" "10.200.200.198") # kir windows
-        (mkWgPeer "YAnDnt7Nebfdsdts2ugHZHUo2hmqL0pD//jpb9zwPmQ=" "10.200.200.41") # proxima
-        (mkWgPeer "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=" "10.200.200.50") # pluto
+        {
+          # fa506ih
+          publicKey = "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=";
+          allowedIPs = [ "10.200.200.2/32" ];
+        }
+        {
+          # pluto; proxima reachable through pluto
+          publicKey = "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=";
+          allowedIPs = [ "10.200.200.50/32" "10.200.200.41/32" ];
+        }
+        {
+          # qblue
+          publicKey = "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=";
+          allowedIPs = [ "10.200.200.10/32" ];
+        }
       ];
       rules = [
         { ip = "10.200.200.2"; outer = 8000; protos = [ "tcp" ]; } # python's http server
         #{ ip = "10.200.200.2"; outer = 16228; protos = [ "udp" ]; } # project zomboid
-        { ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; } # navidrome on qboxblue
+        #{ ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; } # navidrome on qboxblue
         { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; } # kir's nonsense
         { ip = "10.200.200.198"; outer = 26639; protos = [ "tcp" ]; } # kir's comfy ui
       ];
     in {
-      ips = [ "10.200.200.1/24" ];
+      ips = [ "10.200.200.1/32" ];
       listenPort = 51820;
       privateKeyFile = config.sops.secrets."wireguard/private-key".path;
       peers = peers;

@@ -18,6 +18,8 @@
       watermark_scale_factor = 125;
       page-cluster = 0;
     };
+    # required for wireguard routing
+    net.ipv4.ip_forward = 1;
   };
 
   zramSwap = {
@@ -66,13 +68,20 @@
     };
     wireguard.interfaces.wg0 = {
       ips = [ "10.200.200.41/32" ];
+      listenPort = 51820;
       privateKeyFile = config.sops.secrets."wireguard/private-key".path;
-      peers = [{
-        publicKey = "i+NTNzzUn9vuRsmfyidoHgWtqKgb73OOQnajCX86b0c=";
-        endpoint = "127.0.0.1:51821";
-        allowedIPs = [ "10.200.200.0/24" ];
-        persistentKeepalive = 25;
-      }];
+      peers = [
+        {
+          # fa506ih
+          publicKey = "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=";
+          allowedIPs = [ "10.200.200.2/32" ];
+        }
+        {
+          # pluto; rigil reachable through pluto
+          publicKey = "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=";
+          allowedIPs = [ "10.200.200.50/32" "10.200.200.1/32" ];
+        }
+      ];
     };
   };
 
