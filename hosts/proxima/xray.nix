@@ -60,17 +60,6 @@ let
        }
       },
       {
-       "tag": "wireguard-in",
-       "protocol": "dokodemo-door",
-       "listen": "127.0.0.1",
-       "port": 51821,
-       "settings": {
-        "address": "127.0.0.1",
-        "port": 51820,
-        "network": "udp"
-       }
-      },
-      {
        "tag": "api-in",
        "protocol": "dokodemo-door",
        "listen": "127.0.0.1",
@@ -104,12 +93,7 @@ let
         "outboundTag": "api-out"
        },
        {
-        "ruleTag": "wireguard-out",
-        "inboundTag": [ "wireguard-in" ],
-        "outboundTag": "vless-out"
-       },
-       {
-        "ruleTag": "wireguard-in",
+        "ruleTag": "wireguard",
         "inboundTag": [ "vless-in" ],
         "ip": [ "127.0.0.1" ],
         "port": 51820,
