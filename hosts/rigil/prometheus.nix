@@ -90,7 +90,8 @@
   };
   systemd.services.grafana = {
     # grafana listens on 10.200.200.1
-    requires = [ "sys-devices-virtual-net-wg0.device" ];
+    bindsTo = [ "wireguard-wg0.target" ];
+    after = [ "wireguard-wg0.target" ];
     # pass admin password from sops
     serviceConfig.LoadCredential = [
       "admin_password:${config.sops.secrets."grafana/admin_password".path}"

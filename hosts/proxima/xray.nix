@@ -143,6 +143,7 @@ in {
     port = 9092;
     v2rayEndpoint = "127.0.0.1:54321";
   };
-  systemd.services.prometheus-v2ray-exporter.requires = [ "sys-devices-virtual-net-wg0.device" ];
+  systemd.services.prometheus-v2ray-exporter.bindsTo = [ "wireguard-wg0.target" ];
+  systemd.services.prometheus-v2ray-exporter.after = [ "wireguard-wg0.target" ];
 }
 

@@ -41,7 +41,8 @@
       PasswordAuthentication = false;
     };
   };
-  systemd.services.sshd.requires = [ "sys-devices-virtual-net-wg0.device" ];
+  systemd.services.sshd.bindsTo = [ "wireguard-wg0.target" ];
+  systemd.services.sshd.after = [ "wireguard-wg0.target" ];
 
   # network usage monitoring
   services.vnstat.enable = true;

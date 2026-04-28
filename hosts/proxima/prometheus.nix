@@ -7,6 +7,7 @@
     port = 9091;
     enabledCollectors = [ "systemd" ];
   };
-  systemd.services.prometheus-node-exporter.requires = [ "sys-devices-virtual-net-wg0.device" ];
+  systemd.services.prometheus-node-exporter.bindsTo = [ "wireguard-wg0.target" ];
+  systemd.services.prometheus-node-exporter.after = [ "wireguard-wg0.target" ];
 }
 
