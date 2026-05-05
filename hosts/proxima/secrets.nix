@@ -26,6 +26,14 @@
           };
         };
       };
+
+      ddns = {
+        noip = {
+          domain = _: {};
+          username = _: {};
+          password = _: {};
+        };
+      };
     };
   in {
     secrets = builtins.mapAttrs
