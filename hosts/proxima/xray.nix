@@ -59,6 +59,14 @@ let
         "routeOnly": true
        }
       },
+      //{
+      // "tag": "turn-proxy-in",
+      // "protocol": "wireguard",
+      // "listen": "127.0.0.1",
+      // "port": 56001,
+      // "settings": {
+      // }
+      //},
       {
        "tag": "api-in",
        "protocol": "dokodemo-door",
@@ -145,5 +153,14 @@ in {
   };
   systemd.services.prometheus-v2ray-exporter.bindsTo = [ "wireguard-wg0.target" ];
   systemd.services.prometheus-v2ray-exporter.after = [ "wireguard-wg0.target" ];
+
+  services.turn-proxy.server = {
+    enable = true; # Включаем шарманку
+    config = {
+      listeningOn = "0.0.0.0:56000"; # Адрес, который слушает программа, то есть куда будет обращаться TURN сервер с зашифрованным (с помощью DTLS) трафиком (адресант)
+      proxyInto = "127.0.0.1:56001"; # Адрес, куда будет высылаться расшифрованный UDP-трафик (адресат)
+      maxConnections = 2000;
+    };
+  };
 }
 
