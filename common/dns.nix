@@ -21,6 +21,9 @@
       caching = {
         cacheTimeNegative = "30m";
         minTime = "30m";
+        exclude = [
+          ''/.*\.duckdns\.org$/'' # dynamic DNS
+        ];
       };
 
       log = {
