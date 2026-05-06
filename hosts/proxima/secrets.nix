@@ -28,10 +28,9 @@
       };
 
       ddns = {
-        noip = {
-          domain = _: {};
-          username = _: {};
-          password = _: {};
+        duckdns = {
+          domain = _: { restartUnits = [ "ddns-updater.service" ]; };
+          token = _: { restartUnits = [ "ddns-updater.service" ]; };
         };
       };
     };
