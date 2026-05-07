@@ -9,6 +9,11 @@
       wireguard.private-key = _: {};
 
       xray = {
+        turn-proxy-in = {
+          settings = {
+            clients = _: {};
+          };
+        };
         vless-in = {
           settings = {
             clients = _: {};

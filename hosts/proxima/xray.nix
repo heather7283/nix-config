@@ -11,7 +11,8 @@ let
       "error": "/var/log/xray/error.log"
      },
      "api": {
-      "tag": "api-out",
+      "tag": "api",
+      "listen": "127.0.0.1:54321",
       "services": [ "StatsService" ]
      },
      "stats": {
@@ -59,20 +60,27 @@ let
         "routeOnly": true
        }
       },
-      //{
-      // "tag": "turn-proxy-in",
-      // "protocol": "wireguard",
-      // "listen": "127.0.0.1",
-      // "port": 56001,
-      // "settings": {
-      // }
-      //},
       {
-       "tag": "api-in",
-       "protocol": "dokodemo-door",
+       "tag": "turn-proxy-in",
+       "protocol": "vless",
        "listen": "127.0.0.1",
-       "port": 54321,
-       "settings": { "address": "127.0.0.1" }
+       "port": 56001,
+       "settings": {
+        "clients": ${ph."xray/turn-proxy-in/settings/clients"},
+        "decryption": "none"
+       },
+       "streamSettings": {
+        "network": "kcp",
+        "security": "none",
+        "kcpSettings": {
+         "congestion": true
+        }
+       },
+       "sniffing": {
+        "enabled": true,
+        "destOverride": [ "http", "tls", "quic" ],
+        "routeOnly": true
+       }
       }
      ],
      "outbounds": [
@@ -96,11 +104,6 @@ let
       "domainStrategy": "IPIfNonMatch",
       "rules": [
        {
-        "ruleTag": "api",
-        "inboundTag": [ "api-in" ],
-        "outboundTag": "api-out"
-       },
-       {
         "ruleTag": "wireguard",
         "inboundTag": [ "vless-in" ],
         "ip": [ "127.0.0.1" ],
@@ -113,14 +116,18 @@ let
         "outboundTag": "block"
        },
        {
+        "ruleTag": "block-ads",
+        "domain": [ "geosite:category-ads-all" ],
+        "outboundTag": "block"
+       },
+       {
         "ruleTag": "hijack-dns",
-        "inboundTag": [ "vless-in" ],
         "port": "53",
         "outboundTag": "dns-out"
        },
        {
         "ruleTag": "forward-to-pluto",
-        "inboundTag": [ "vless-in" ],
+        "inboundTag": [ "vless-in", "turn-proxy-in" ],
         "outboundTag": "pluto-out"
        }
       ]
@@ -155,10 +162,10 @@ in {
   systemd.services.prometheus-v2ray-exporter.after = [ "wireguard-wg0.target" ];
 
   services.turn-proxy.server = {
-    enable = true; # Включаем шарманку
+    enable = true;
     config = {
-      listeningOn = "0.0.0.0:56000"; # Адрес, который слушает программа, то есть куда будет обращаться TURN сервер с зашифрованным (с помощью DTLS) трафиком (адресант)
-      proxyInto = "127.0.0.1:56001"; # Адрес, куда будет высылаться расшифрованный UDP-трафик (адресат)
+      listeningOn = "0.0.0.0:56000";
+      proxyInto = "127.0.0.1:56001";
       maxConnections = 2000;
     };
   };
