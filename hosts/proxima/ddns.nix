@@ -3,7 +3,8 @@
 {
   # I couldn't get ddns-updater to work so this will do
   systemd.timers.duckdns-updater = {
-    requires = [ "network.target" ];
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnBootSec = "0 sec";
@@ -31,6 +32,8 @@
         "token:${config.sops.secrets."ddns/duckdns/token".path}"
       ];
       DynamicUser = true;
+      Restart = "on-failure";
+      RestartSec = "10s";
     };
   };
 }
