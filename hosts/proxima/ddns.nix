@@ -6,7 +6,7 @@
     requires = [ "network.target" ];
     wantedBy = [ "timers.target" ];
     timerConfig = {
-      #OnCalendar = "*-*-* *:0/5:0"; # every 5 minutes
+      OnBootSec = "0 sec";
       OnUnitActiveSec = "5 min";
     };
   };
