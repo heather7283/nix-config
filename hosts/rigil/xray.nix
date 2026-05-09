@@ -17,7 +17,8 @@ let
       "error": "/var/log/xray/error.log"
      },
      "api": {
-      "tag": "api-out",
+      "tag": "api",
+      "listen": "127.0.0.1:54321",
       "services": [ "StatsService" ]
      },
      "stats": {
@@ -64,13 +65,6 @@ let
         "destOverride": [ "http", "tls", "quic" ],
         "routeOnly": true
        }
-      },
-      {
-       "tag": "api-in",
-       "protocol": "dokodemo-door",
-       "listen": "127.0.0.1",
-       "port": 54321,
-       "settings": { "address": "127.0.0.1" }
       }
      ],
      "outbounds": [
@@ -101,11 +95,6 @@ let
      "routing": {
       "domainStrategy": "IPIfNonMatch",
       "rules": [
-       {
-        "ruleTag": "api",
-        "inboundTag": [ "api-in" ],
-        "outboundTag": "api-out"
-       },
        {
         "ruleTag": "wireguard",
         "inboundTag": [ "vless-in" ],
