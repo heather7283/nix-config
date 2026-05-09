@@ -89,5 +89,7 @@
     mode = "0644";
     restartUnits = [ "systemd-networkd.service" ];
   };
+
+  services.ext.server-identification.enable = true;
 }
 

@@ -36,5 +36,7 @@
       RestartSec = "10s";
     };
   };
+
+  services.ext.server-identification.enable = true;
 }
 
