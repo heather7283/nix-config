@@ -8,6 +8,10 @@
 
       wireguard.private-key = _: {};
 
+      vk-turn-proxy = {
+        wrap-key = _: { restartUnits = [ "vk-turn-proxy-server.service" ]; };
+      };
+
       xray = {
         turn-proxy-in = {
           settings = {

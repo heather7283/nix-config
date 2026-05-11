@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   ph = config.sops.placeholder;
@@ -68,13 +68,6 @@ let
        "settings": {
         "clients": ${ph."xray/turn-proxy-in/settings/clients"},
         "decryption": "none"
-       },
-       "streamSettings": {
-        "network": "kcp",
-        "security": "none",
-        "kcpSettings": {
-         "congestion": true
-        }
        },
        "sniffing": {
         "enabled": true,
@@ -161,13 +154,63 @@ in {
   systemd.services.prometheus-v2ray-exporter.bindsTo = [ "wireguard-wg0.target" ];
   systemd.services.prometheus-v2ray-exporter.after = [ "wireguard-wg0.target" ];
 
-  services.turn-proxy.server = {
-    enable = true;
-    config = {
-      listeningOn = "0.0.0.0:56000";
-      proxyInto = "127.0.0.1:56001";
-      maxConnections = 2000;
+  systemd.services.vk-turn-proxy-server = {
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      Restart = "always";
+
+      ExecStart = let
+        binary = pkgs.ext.fetchGitHubRelease {
+          owner = "Moroka8";
+          repo = "vk-turn-proxy";
+          tag = "v1.9.1";
+          asset = "server-linux-amd64";
+          sha256 = "sha256-V8LTpT6Ea2ojlejY77J3952d2ZHak6hF+PxLy6OwDsI=";
+        };
+      in pkgs.writeShellScript "vk-turn-proxy-start.sh" ''
+        # do not set -x or the key will leak into journal lmao
+        set -eu
+
+        exec ${pkgs.ext.makeExecutable binary} \
+          -connect 127.0.0.1:56001 -listen 0.0.0.0:56395 \
+          -wrap -wrap-key "$(cat "$CREDENTIALS_DIRECTORY/wrap-key")" \
+          -vless -vless-bond
+      '';
+      LoadCredential = [
+        "wrap-key:${config.sops.secrets."vk-turn-proxy/wrap-key".path}"
+      ];
+
+      DynamicUser = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      KeyringMode = "private";
+      LockPersonality = true;
+      MemoryDenyWriteExecute = true;
+      NoNewPrivileges = true;
+      PrivateMounts = "yes";
+      PrivateTmp = "yes";
+      ProtectControlGroups = true;
+      ProtectHostname = true;
+      ProtectKernelModules = true;
+      ProtectKernelTunables = true;
+      RemoveIPC = true;
+      RestrictAddressFamilies = [ "AF_INET" "AF_INET6" ];
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      RestrictSUIDSGID = true;
+      SystemCallFilter = "@system-service";
+      SystemCallArchitectures = "native";
+      DevicePolicy = "closed";
     };
+  };
+
+  networking.firewall = {
+   allowedTCPPorts = [ 443 ]; # xray reality
+   allowedUDPPorts = [ 56395 ]; # turn proxy
   };
 }
 

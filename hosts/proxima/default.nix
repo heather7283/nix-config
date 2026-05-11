@@ -63,8 +63,6 @@
     firewall = {
       enable = true;
       trustedInterfaces = [ "wg0" ];
-      allowedTCPPorts = [ 443 ];
-      allowedUDPPorts = [ 56000 ];
       logRefusedConnections = false; # pollutes logs a lot
     };
     wireguard.interfaces.wg0 = {

@@ -19,9 +19,6 @@
 
     ycurator.url = "git+ssh://git@github.com/heather7283/ycurator.git";
     ycurator.inputs.nixpkgs.follows = "nixpkgs";
-
-    turn-proxy.url = "github:heather7283/turn-proxy/fix-nixos-server-module";
-    turn-proxy.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { nixpkgs, secrets, ... }@inputs: let
     # extend lib with custom functions from ./lib directory
@@ -36,7 +33,6 @@
         inputs.disko.nixosModules.disko
         inputs.giorno.nixosModules.giorno
         inputs.ycurator.nixosModules.ycurator
-        inputs.turn-proxy.nixosModules.server
         ./overlays
         ./modules
         ./common
