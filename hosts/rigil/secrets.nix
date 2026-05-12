@@ -23,6 +23,8 @@
         owner = _: { restartUnits = [ "jmusicbot.service" ]; };
       };
 
+      bitcoind.rpcauth = _: {};
+
       xray = {
         vless-in = {
           settings = {
