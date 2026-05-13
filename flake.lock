@@ -122,10 +122,10 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1778624244,
-        "narHash": "sha256-5v3sR70/bnChNkPyW5rLC94N19Np41/dMlhS7tRS/6s=",
+        "lastModified": 1778679740,
+        "narHash": "sha256-A2AdE691qv8aooi0C03NGpf9FtANJXJql83vy88F5Y8=",
         "ref": "refs/heads/master",
-        "rev": "d77ca403cee65eacaeb1c2623e3eff9e9aac8996",
+        "rev": "3508d569d7852cfbb2e0e9b0090ba756d0833a11",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/nix-secrets.git"
