@@ -18,6 +18,11 @@
     globalConfig = {
       scrape_interval = "10s";
     };
+    extraFlags = [
+      # ref: https://stackoverflow.com/questions/59298811/increasing-prometheus-storage-retention
+      "--storage.tsdb.retention.time=31d"
+    ];
+
     scrapeConfigs = with builtins; let
       instances = {
         "127.0.0.1" = "rigil";
