@@ -23,13 +23,14 @@
     restartUnits = [ "bitcoind-main.service" ];
   };
   services.bitcoind.main = {
-    enable = true;
+    enable = false;
     extraConfig = ''
       includeconf=/run/credentials/bitcoind-main.service/bitcoind.conf
     '';
   };
 
   systemd.services.bitcoind-main = {
+    enable = false;
     bindsTo = [ "wireguard-wg0.target" ];
     after = [ "wireguard-wg0.target" ];
 
