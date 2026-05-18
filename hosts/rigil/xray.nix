@@ -139,6 +139,12 @@ let
         "ruleTag": "vless-route-0001-warp",
         "vlessRoute": 1,
         "outboundTag": "warp-out"
+       },
+       {
+        // reddit seems to have blocked my IP lmao
+        "ruleTag": "reddit-warp",
+        "domain": [ "geosite:reddit" ],
+        "outboundTag": "warp-out"
        }
       ]
      }
