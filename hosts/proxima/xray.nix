@@ -83,13 +83,27 @@ let
       },
       {
        "tag": "direct-out",
-       "protocol": "freedom"
+       "protocol": "freedom",
+       "settings": {
+        "finalRules": [
+         { // wireguard
+          "action": "allow",
+          "network": "udp",
+          "ip": [ "127.0.0.1" ],
+          "port": 51820
+         }
+         // implicit catch-all is to block private ranges
+        ]
+       }
       },
       {
        "tag": "dns-out",
-       "protocol": "freedom",
+       "protocol": "dns",
        "settings": {
-        "redirect": "127.0.0.1:53"
+        "rewriteNetwork": "udp",
+        "rewriteAddress": "127.0.0.1",
+        "rewritePort": 53,
+        "rules": [{ "action": "direct" }]
        }
       }
      ],
@@ -101,6 +115,7 @@ let
         "inboundTag": [ "vless-in" ],
         "ip": [ "127.0.0.1" ],
         "port": 51820,
+        "network": "udp",
         "outboundTag": "direct-out"
        },
        {

@@ -70,7 +70,28 @@ let
      "outbounds": [
       {
        "tag": "direct-out",
-       "protocol": "freedom"
+       "protocol": "freedom",
+       "settings": {
+        "finalRules": [
+         { // wireguard
+          "action": "allow",
+          "network": "udp",
+          "ip": [ "127.0.0.1" ],
+          "port": 51820
+         },
+         { // fa506ih ssh (only really needed for pyxis)
+          "action": "allow",
+          "network": "tcp",
+          "ip": [ "10.200.200.2" ],
+          "port": 22
+         },
+         {
+          "action": "block",
+          "ip": [ "geoip:ru" ]
+         }
+         // implicit catch-all is to block private ranges
+        ]
+       }
       },
       {
        "tag": "warp-out",
@@ -84,7 +105,10 @@ let
        "tag": "dns-out",
        "protocol": "dns",
        "settings": {
-        "nonIPQuery": "drop"
+        "rewriteNetwork": "udp",
+        "rewriteAddress": "127.0.0.1",
+        "rewritePort": 53,
+        "rules": [{ "action": "direct" }]
        }
       },
       {
@@ -100,6 +124,7 @@ let
         "inboundTag": [ "vless-in" ],
         "ip": [ "127.0.0.1" ],
         "port": 51820,
+        "network": "udp",
         "outboundTag": "direct-out"
        },
        {

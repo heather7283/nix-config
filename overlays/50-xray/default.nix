@@ -4,7 +4,7 @@ final: prev: {
   # apparently if I don't do this the entire `unstable` attrset get overwritten
   unstable = prev.unstable // {
     xray = prev.unstable.xray.overrideAttrs (old: let
-      version = "26.3.27";
+      version = "26.5.9";
       patches = with builtins; readDir ./patches |> attrNames |> map (p: ./patches/${p});
     in {
       inherit version;
@@ -13,9 +13,9 @@ final: prev: {
         owner = "XTLS";
         repo = "Xray-core";
         rev = "v${version}";
-        hash = "sha256-tSSoaIKHgLf9ry6p0Y+BM1Nx8X+40BDDfJJYkABUoEc=";
+        hash = "sha256-5krtsy9bUVh7ONxuINAgpm4JmdjtQVBN4w0x3dJDHVo=";
       };
-      vendorHash = "sha256-kwvck6Eo/e6qgb1ENznhwZ/GPX75ssLUvR2u8Qm3UIM=";
+      vendorHash = "sha256-cmfHiX/MmiCWC1vxd7rkCegxMdGiFUUvfncHObQ0zKc=";
 
       patches = (old.patches or []) ++ patches;
     });
