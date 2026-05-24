@@ -38,8 +38,13 @@
 
       ddns = {
         duckdns = {
-          domain = _: { restartUnits = [ "ddns-updater.service" ]; };
-          token = _: { restartUnits = [ "ddns-updater.service" ]; };
+          domain = _: { restartUnits = [ "duckdns-updater.service" ]; };
+          token = _: { restartUnits = [ "duckdns-updater.service" ]; };
+        };
+        noip = {
+          hostname = _: { restartUnits = [ "noip-updater.service" ]; };
+          username = _: { restartUnits = [ "noip-updater.service" ]; };
+          password = _: { restartUnits = [ "noip-updater.service" ]; };
         };
       };
     };
