@@ -191,9 +191,9 @@ in {
         set -eu
 
         exec ${pkgs.ext.makeExecutable binary} \
-          -connect 127.0.0.1:56001 -listen 0.0.0.0:56000 \
-          -vless -vless-bond \
-          -wrap -wrap-key "$(cat "$CREDENTIALS_DIRECTORY/wrap-key")"
+          -connect 127.0.0.1:56001 -listen 0.0.0.0:56395 \
+          -wrap -wrap-key "$(cat "$CREDENTIALS_DIRECTORY/wrap-key")" \
+          -vless -vless-bond
       '';
       LoadCredential = [
         "wrap-key:${config.sops.secrets."vk-turn-proxy/wrap-key".path}"
@@ -223,26 +223,9 @@ in {
     };
   };
 
-  networking = let
-    firstTurnPort = 56000;
-    lastTurnPort = 58000;
-  in {
-    firewall = {
-      allowedTCPPorts = [ 443 ]; # xray reality
-      allowedUDPPortRanges = [
-        { from = firstTurnPort; to = lastTurnPort; } # vk-turn-proxy (see below)
-      ];
-    };
-    nftables.tables.vk-turn-proxy = {
-      family = "ip";
-      # TODO: iif?
-      content = with builtins; ''
-        chain prerouting {
-          type nat hook prerouting priority -100;
-          udp dport ${toString firstTurnPort}-${toString lastTurnPort} redirect to :56000
-        }
-      '';
-    };
+  networking.firewall = {
+   allowedTCPPorts = [ 443 ]; # xray reality
+   allowedUDPPorts = [ 56395 ]; # turn proxy
   };
 }
 
