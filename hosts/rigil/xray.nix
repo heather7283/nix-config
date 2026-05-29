@@ -151,24 +151,19 @@ let
         "outboundTag": "dns-out"
        },
        {
-        "ruleTag": "prevent-return-to-russia-ip",
+        "ruleTag": "warp-ips",
         "ip": [ "geoip:ru" ],
-        "outboundTag": "block"
-       },
-       {
-        "ruleTag": "prevent-return-to-russia-domain",
-        "domain": [ "geosite:category-ru" ],
-        "outboundTag": "block"
-       },
-       {
-        "ruleTag": "vless-route-0001-warp",
-        "vlessRoute": 1,
         "outboundTag": "warp-out"
        },
        {
+        "ruleTag": "warp-domains",
         // reddit seems to have blocked my IP lmao
-        "ruleTag": "reddit-warp",
-        "domain": [ "geosite:reddit" ],
+        "domain": [ "geosite:category-ru", "geosite:reddit" ],
+        "outboundTag": "warp-out"
+       },
+       {
+        "ruleTag": "warp-vless-route-0001",
+        "vlessRoute": 1,
         "outboundTag": "warp-out"
        }
       ]
