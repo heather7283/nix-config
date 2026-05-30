@@ -2,13 +2,13 @@
 
 {
   services.prometheus = {
-    enable = true;
+    enable = false; # TODO: reenable
     listenAddress = "127.0.0.1";
     port = 9090;
 
     exporters = {
       node = {
-        enable = true;
+        enable = false; # TODO: reenable
         listenAddress = "127.0.0.1";
         port = 9091;
         enabledCollectors = [ "systemd" ];
@@ -49,7 +49,7 @@
   };
 
   services.grafana = {
-    enable = true;
+    enable = false; # TODO: reenable
     settings = {
       server = {
         http_addr = "10.200.200.1";
@@ -94,6 +94,7 @@
     };
   };
   systemd.services.grafana = {
+    enable = false; # TODO: reenable
     # grafana listens on 10.200.200.1
     bindsTo = [ "wireguard-wg0.target" ];
     after = [ "wireguard-wg0.target" ];

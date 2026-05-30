@@ -1,28 +1,17 @@
-# Example to create a bios compatible gpt partition
 { lib, ... }:
 
 {
   disko.devices = {
-    disk.vda = {
+    disk.disk1 = {
       device = "/dev/vda";
       type = "disk";
       content = {
         type = "gpt";
         partitions = {
           boot = {
-            name = "boot";
+            name = "bios";
             type = "EF02";
-            size = "2M";
-          };
-          esp = {
-            name = "esp";
-            type = "EF00";
-            size = "500M";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountpoint = "/boot";
-            };
+            size = "1M";
           };
           root = {
             name = "root";
@@ -31,13 +20,7 @@
               type = "btrfs";
               extraArgs = [ "-f" ];
               mountpoint = "/";
-              mountOptions = [ "compress=zstd" "noatime" ];
-              subvolumes = {
-                "/swap" = {
-                  mountpoint = "/swap";
-                  swap.swapfile.size = "2G";
-                };
-              };
+              mountOptions = [ "compress=zstd" ];
             };
           };
         };

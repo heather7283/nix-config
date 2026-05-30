@@ -46,5 +46,8 @@
       "-jar" "/jmusicbot.jar"
     ];
   };
+
+  # TODO: reenable
+  systemd.services.jmusicbot.enable = false;
 }
 

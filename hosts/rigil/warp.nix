@@ -32,7 +32,8 @@
   };
 
   systemd.services.cloudflare-warp = {
-    enable = true;
+    # TODO: reenable
+    enable = false;
 
     requires = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];

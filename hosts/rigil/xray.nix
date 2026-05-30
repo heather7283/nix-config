@@ -177,7 +177,7 @@ in {
   };
 
   services.xray = {
-    enable = true;
+    enable = false; # TODO: reenable
     settingsFile = config.sops.templates."xray-config.jsonc".path;
     # stable nixos has ancient geoip/domain list and I have no idea how to overwrite only those
     package = pkgs.unstable.xray;
@@ -195,7 +195,7 @@ in {
   };
 
   services.prometheus.exporters.v2ray = {
-    enable = true;
+    enable = false; # TODO: reenable
     listenAddress = "127.0.0.1";
     port = 9092;
     v2rayEndpoint = "127.0.0.1:54321";

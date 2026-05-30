@@ -10,6 +10,10 @@
           address = _: {};
           gateway = _: {};
         };
+        v6 = {
+          address = _: {};
+          gateway = _: {};
+        };
       };
 
       users.heather.password = _: { neededForUsers = true; };

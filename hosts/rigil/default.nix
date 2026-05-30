@@ -6,25 +6,23 @@
   users.users.heather = {
     hashedPasswordFile = config.sops.secrets."users/heather/password".path;
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICpdk79pzgahzN3CMCWMxWafgINDPWxwtQFt4okXpIAi FA506IH"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOvIvRUOKHDD9e6ksNw9eM/qXFQrWIVRY4RwqVvJwI/q FA506IH"
     ];
   };
 
   services.openssh = {
     enable = true;
-    listenAddresses = [{ addr = "10.200.200.1"; port = 60322; }];
-    openFirewall = false;
+    # TODO: wg
+    listenAddresses = [{ addr = "0.0.0.0"; port = 22; }];
+    openFirewall = true;
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;
     };
   };
   # fix sshd starting before wireguard interfce is up
-  systemd.services.sshd.bindsTo = [ "wireguard-wg0.target" ];
-  systemd.services.sshd.after = [ "wireguard-wg0.target" ];
-
-  # network usage monitoring
-  services.vnstat.enable = true;
+  #systemd.services.sshd.bindsTo = [ "wireguard-wg0.target" ];
+  #systemd.services.sshd.after = [ "wireguard-wg0.target" ];
 
   # some systemd/glibc bloatware nonsense
   system.nssModules = lib.mkForce [];
@@ -39,7 +37,7 @@
   };
 
   services.ycurator = {
-    enable = true;
+    enable = false;
     keyFile = config.sops.secrets."ycurator/authorized_key.json".path;
     configFile = config.sops.secrets."ycurator/config.json".path;
   };
@@ -58,7 +56,7 @@
 
     firewall = {
       enable = true;
-      trustedInterfaces = [ "wg0" ];
+      #trustedInterfaces = [ "wg0" ];
       allowedTCPPorts = [
         443 # https
       ];
@@ -80,10 +78,14 @@
 
       [Network]
       Address=${ph."ip/v4/address"}
+      Address=${ph."ip/v6/address"}
 
       [Route]
       Gateway=${ph."ip/v4/gateway"}
       GatewayOnLink=true
+
+      [Route]
+      Gateway=${ph."ip/v6/gateway"}
     '';
     path = "/etc/systemd/network/ens3.network";
     mode = "0644";
