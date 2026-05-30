@@ -46,6 +46,8 @@
     l = "right-scroll";
   };
 
+  programs.nix-index-database.comma.enable = true;
+
   security = {
     sudo.extraConfig = builtins.concatStringsSep "\n" [
       "Defaults lecture = never"

@@ -14,6 +14,9 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
     giorno.url = "git+ssh://git@github.com/heather7283/giorno.git";
     giorno.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -31,6 +34,7 @@
       modules = [
         inputs.sops-nix.nixosModules.sops
         inputs.disko.nixosModules.disko
+        inputs.nix-index-database.nixosModules.default
         inputs.giorno.nixosModules.giorno
         inputs.ycurator.nixosModules.ycurator
         ./overlays
