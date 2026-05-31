@@ -4,6 +4,7 @@
   users.users.vnc = {
     isNormalUser = true;
     linger = true;
+    uid = 1001;
   };
 
   systemd.user.services.vnc-compositor = let
