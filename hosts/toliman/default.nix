@@ -57,7 +57,6 @@
       ];
       allowedUDPPorts = [
       ];
-      logRefusedConnections = false; # pollutes logs a lot
     };
   };
 

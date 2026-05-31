@@ -59,7 +59,6 @@
     firewall = {
       enable = true;
       trustedInterfaces = [ "wg0" ];
-      logRefusedConnections = false; # pollutes logs a lot
     };
     wireguard.interfaces.wg0 = {
       ips = [ "10.200.200.41/32" ];
