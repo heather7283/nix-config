@@ -1,15 +1,8 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
 {
-  users.users.cloudflare-warp = {
-    isNormalUser = false;
-    isSystemUser = true;
-    group = "cloudflare-warp";
-  };
-  users.groups.cloudflare-warp = {};
-
-  system.activationScripts.cloudflare-warp = let
-    settings_json = pkgs.writeText "settings.json" ''
+  systemd.services.cloudflare-warp = let
+    settings = pkgs.writeText "settings.json" ''
       {
         "version": 1,
         "always_on": true,
@@ -22,20 +15,7 @@
       }
     '';
   in {
-    deps = [ "users" "groups" "binsh" ];
-    text = ''
-      mkdir -p /var/lib/cloudflare-warp
-      chown -R cloudflare-warp:cloudflare-warp /var/lib/cloudflare-warp
-      chmod 0700 /var/lib/cloudflare-warp
-      ln -sf ${settings_json} /var/lib/cloudflare-warp/settings.json
-    '';
-  };
-
-  systemd.services.cloudflare-warp = {
-    # TODO: reenable
-    enable = false;
-
-    requires = [ "network.target" ];
+    requires = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {
@@ -45,9 +25,16 @@
       RestartSec = 5;
       LogLevelMax = "warning";
 
-      User = "cloudflare-warp";
-      Group = "cloudflare-warp";
+      LoadCredential = [
+        "reg.json:${config.sops.secrets."warp/reg.json".path}"
+      ];
 
+      BindReadOnlyPaths = [
+        "${settings}:/var/lib/cloudflare-warp/settings.json"
+        "/run/credentials/cloudflare-warp.service/reg.json:/var/lib/cloudflare-warp/reg.json"
+      ];
+
+      DynamicUser = true;
       StateDirectory = "cloudflare-warp";
       StateDirectoryMode = "0700";
       RuntimeDirectory = "cloudflare-warp";
@@ -55,6 +42,20 @@
       LogsDirectory = "cloudflare-warp";
       LogsDirectoryMode = "0700";
       WorkingDirectory = "/var/lib/cloudflare-warp";
+
+      # know your place, proprietary corporateware
+      NoNewPrivileges = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      ProtectProc = "invisible";
+      ProtectHostname = "yes:debian";
+      PrivateTmp = true;
+      PrivateDevices = true;
+      PrivateUsers = true;
+      PrivateIPC = true;
+      RemoveIPC = true;
+      RestrictAddressFamilies = "AF_UNIX AF_INET AF_INET6 AF_NETLINK";
+      SystemCallFilter = "@system-service";
     };
   };
 

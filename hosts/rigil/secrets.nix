@@ -76,13 +76,10 @@
       };
 
       warp = {
-        "reg.json" = p: {
-          sopsFile = lib.getAttrFromPath p paths;
+        "reg.json" = path: {
+          sopsFile = lib.getAttrFromPath path paths;
           format = "json";
           key = "";
-          owner = "cloudflare-warp";
-          group = "cloudflare-warp";
-          path = "/var/lib/cloudflare-warp/reg.json";
           restartUnits = [ "cloudflare-warp.service" ];
         };
       };
