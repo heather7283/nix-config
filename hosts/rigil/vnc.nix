@@ -81,5 +81,88 @@
       ];
     };
   };
+
+  systemd.services.vnc-netns-proxy = let
+    netns = "vnc";
+    tun = "vnc-tun";
+    tunip = "172.16.0.1";
+    script = with pkgs; writeShellApplication {
+      name = "vnc-netns-proxy.sh";
+      runtimeInputs = [ coreutils iproute2 unstable.xray ];
+      text = ''
+        netns="${netns}"
+        tun="${tun}"
+        tunip="${tunip}"
+
+        cleanup() {
+            set +eu
+            [ -n "$xray_pid" ] && kill "$xray_pid"
+            wait
+            ip link delete "$tun"
+            ip netns delete "$netns"
+        }
+        trap cleanup INT TERM QUIT EXIT
+
+        # create netns itself
+        ip netns add "$netns"
+        # bring up lo in netns
+        ip -n "$netns" link set lo up
+
+        # create tun device outside of netns
+        ip tuntap add dev "$tun" mode tun
+
+        # let xray open the tun device...
+        xray run <<EOF &
+        {
+         "inbounds": [
+          { "protocol": "tun", "port": 0, "settings": { "name": "$tun" } }
+         ],
+         "outbounds": [
+          { "protocol": "socks", "settings": { "address": "127.0.0.1", "port": 10809 } }
+         ],
+         "log": {
+          "loglevel": "none"
+         }
+        }
+        EOF
+        xray_pid="$!"
+
+        # ..and wait for it to bring it up
+        attempts=0
+        while ! ip link show "$tun" | grep -qFe 'state UP'; do
+            attempts=$(( attempts + 1 ))
+            if [ "$attempts" -gt 50 ]; then
+                echo "xray didn't bring tun interface up"
+                exit 1
+            fi
+            sleep 0.1
+        done
+
+        # now move the tun into netns and set up routing
+        ip link set "$tun" netns "$netns"
+        ip -n "$netns" link set "$tun" up
+        ip -n "$netns" addr add "$tunip" dev "$tun"
+        ip -n "$netns" route add default dev "$tun"
+
+        wait
+      '';
+    };
+    cleanup-script = with pkgs; writeShellApplication {
+      name = "vnc-netns-proxy-cleanup.sh";
+      runtimeInputs = [ iproute2 ];
+      text = ''
+        ip link delete "${tun}" || true
+        ip netns delete "${netns}" || true
+      '';
+    };
+  in {
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${script}/bin/vnc-netns-proxy.sh";
+      ExecStopPost = "${cleanup-script}/bin/vnc-netns-proxy-cleanup.sh";
+      Restart = "on-failure";
+    };
+  };
 }
 
