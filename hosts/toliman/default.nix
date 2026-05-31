@@ -30,8 +30,6 @@
   system.nssModules = lib.mkForce [];
   services.nscd.enable = false;
 
-  services.resolved.enable = lib.mkForce false;
-
   services.giorno = {
     enable = false;
     configFile = config.sops.secrets."giorno/config.toml".path;
@@ -50,11 +48,6 @@
 
     # DO NOT USE. Does not work properly with my custom port forwarding rules
     nftables.enable = false;
-
-    resolvconf = {
-      enable = false;
-      useLocalResolver = true;
-    };
 
     firewall = {
       enable = true;

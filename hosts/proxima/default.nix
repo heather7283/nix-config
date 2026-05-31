@@ -55,10 +55,6 @@
   networking = {
     enableIPv6 = false;
     useDHCP = true;
-    resolvconf = {
-      enable = false;
-      useLocalResolver = true;
-    };
     nftables.enable = true;
     firewall = {
       enable = true;

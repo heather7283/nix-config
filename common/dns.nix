@@ -38,6 +38,11 @@ in {
     };
   };
 
+  networking.resolvconf = {
+    enable = false;
+    useLocalResolver = true;
+  };
+
   # see https://discourse.nixos.org/t/why-cant-i-get-dns-nameservers-to-stick/59132
   environment.etc."resolv.conf".text = ''
     nameserver 127.0.0.1
