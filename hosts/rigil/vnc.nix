@@ -1,6 +1,10 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
-{
+let
+  netns-name = "vnc";
+  tun-name = "vnc-tun";
+  tun-ip = "172.16.0.1";
+in {
   users.users.vnc = {
     isNormalUser = true;
     linger = true;
@@ -83,25 +87,13 @@
   };
 
   systemd.services.vnc-netns-proxy = let
-    netns = "vnc";
-    tun = "vnc-tun";
-    tunip = "172.16.0.1";
     script = with pkgs; writeShellApplication {
       name = "vnc-netns-proxy.sh";
       runtimeInputs = [ coreutils iproute2 unstable.xray ];
       text = ''
-        netns="${netns}"
-        tun="${tun}"
-        tunip="${tunip}"
-
-        cleanup() {
-            set +eu
-            [ -n "$xray_pid" ] && kill "$xray_pid"
-            wait
-            ip link delete "$tun"
-            ip netns delete "$netns"
-        }
-        trap cleanup INT TERM QUIT EXIT
+        netns="${netns-name}"
+        tun="${tun-name}"
+        tunip="${tun-ip}"
 
         # create netns itself
         ip netns add "$netns"
@@ -114,18 +106,46 @@
         # let xray open the tun device...
         xray run <<EOF &
         {
+         "log": {
+          "loglevel": "error"
+         },
          "inbounds": [
-          { "protocol": "tun", "port": 0, "settings": { "name": "$tun" } }
+          {
+           "protocol": "tun",
+           "port": 0,
+           "settings": {
+            "name": "$tun"
+           },
+           "sniffing": {
+            "enabled": true, "routeOnly": true, "destOverride": [ "http", "tls", "quic" ]
+           }
+          }
          ],
          "outbounds": [
-          { "protocol": "socks", "settings": { "address": "127.0.0.1", "port": 10809 } }
+          {
+           "tag": "socks-out",
+           "protocol": "socks",
+           "settings": { "address": "127.0.0.1", "port": 10809 }
+          },
+          {
+           "tag": "dns-out",
+           "protocol": "dns",
+           "settings": {
+            "rewriteNetwork": "udp",
+            "rewriteAddress": "127.0.0.1",
+            "rewritePort": 53,
+            "rules": [{ "action": "direct" }]
+           }
+          }
          ],
-         "log": {
-          "loglevel": "none"
+         "routing": {
+          "domainStrategy": "AsIs",
+          "rules": [
+           { "port": 53, "outboundTag": "dns-out" }
+          ]
          }
         }
         EOF
-        xray_pid="$!"
 
         # ..and wait for it to bring it up
         attempts=0
@@ -151,8 +171,8 @@
       name = "vnc-netns-proxy-cleanup.sh";
       runtimeInputs = [ iproute2 ];
       text = ''
-        ip link delete "${tun}" || true
-        ip netns delete "${netns}" || true
+        ip link delete "${tun-name}" || true
+        ip netns delete "${netns-name}" || true
       '';
     };
   in {
@@ -162,6 +182,21 @@
       ExecStart = "${script}/bin/vnc-netns-proxy.sh";
       ExecStopPost = "${cleanup-script}/bin/vnc-netns-proxy-cleanup.sh";
       Restart = "on-failure";
+    };
+  };
+
+  systemd.services."user@${builtins.toString config.users.users.vnc.uid}" = {
+    overrideStrategy = "asDropin";
+    bindsTo = [ "vnc-netns-proxy.service" ];
+    after = [ "vnc-netns-proxy.service" ];
+    serviceConfig = {
+      NetworkNamespacePath = "/run/netns/${netns-name}";
+      BindReadOnlyPaths = let
+        # this is only to trick routing, it will be intercepted by xray anyway
+        resolv-conf = pkgs.writeText "vnc-resolv.conf" "nameserver 1.1.1.1";
+      in
+        "${resolv-conf}:/etc/resolv.conf"
+      ;
     };
   };
 }
