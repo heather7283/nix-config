@@ -99,16 +99,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1779796641,
-        "narHash": "sha256-ZsIrKmhp4vbBXoXXmR/tBXA/UCsAQiJL9vsgZEduhVY=",
+        "lastModified": 1780051219,
+        "narHash": "sha256-WnxzG4x47uCgjz+uD+vOzbF+Qid+hKyYdJWbduA9w7g=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "25f538306313eae3927264466c70d7001dcea1df",
+        "rev": "e8e446a361172fe838243958325845d0b845c5e5",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-25.11",
+        "ref": "nixos-26.05",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -143,10 +143,10 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1780105956,
-        "narHash": "sha256-HjYX2CqqE8A3S1eYJQuOFBhdrHYp/zjDYhtyVdNeLyY=",
+        "lastModified": 1780231347,
+        "narHash": "sha256-A537L4pzW6FMXCmpEhi9CCTQXyGxZs8hLwkczok7Yaw=",
         "ref": "refs/heads/master",
-        "rev": "af04aea9ce6fb1dfef9e120b16078fbb8e9cb0a1",
+        "rev": "53d515f9811eb27c5ec5023b5f97ff7eeaf40dac",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/nix-secrets.git"

@@ -2,7 +2,7 @@
   # apparently functions are not allowed in flake inputs so I have to repeat
   # the `inputs.nixpkgs.follows = "nixpkgs";` mantra for every fucking input
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
