@@ -61,7 +61,8 @@
         # For system services the path may also be referenced as "/run/credentials/UNITNAME"
         # in cases where no interpolation is possible, e.g. configuration files of software
         # that does not yet support credentials natively.
-        admin_password = "$__file{/run/credentials/grafana.service/admin_password}";
+        secret_key = "$__file{/run/credentials/grafana.service/admin_password}";
+        admin_password = "$__file{/run/credentials/grafana.service/secret_key}";
       };
     };
 
@@ -100,6 +101,7 @@
     # pass admin password from sops
     serviceConfig.LoadCredential = [
       "admin_password:${config.sops.secrets."grafana/admin_password".path}"
+      "secret_key:${config.sops.secrets."grafana/secret_key".path}"
     ];
   };
 }
