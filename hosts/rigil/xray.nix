@@ -3,6 +3,12 @@
 let
   ph = config.sops.placeholder;
 
+  clients = ph."xray/vless-in/settings/clients";
+  dest = ph."xray/vless-in/streamSettings/realitySettings/dest";
+  privateKey = ph."xray/vless-in/streamSettings/realitySettings/privateKey";
+  shortIds = ph."xray/vless-in/streamSettings/realitySettings/shortIds";
+  path = ph."xray/vless-in/streamSettings/xhttpSettings/path";
+
   xrayConfig = ''
     {
      "log": {
@@ -45,6 +51,34 @@ let
         "destOverride": [ "http", "tls", "quic" ],
         "routeOnly": true
        }
+      },
+      {
+       "tag": "vless-in",
+       "protocol": "vless",
+       "listen": "0.0.0.0",
+       "port": 443,
+       "settings": {
+        "clients": ${clients},
+        "decryption": "none"
+       },
+       "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+         "dest": "${dest}:443",
+         "serverNames": [ "${dest}" ],
+         "privateKey": "${privateKey}",
+         "shortIds": ${shortIds}
+        },
+        "xhttpSettings": {
+         "path": "${path}"
+        }
+       },
+       "sniffing": {
+        "enabled": true,
+        "destOverride": [ "http", "tls", "quic" ],
+        "routeOnly": true
+       }
       }
      ],
      "outbounds": [
@@ -58,12 +92,6 @@ let
           "network": "udp",
           "ip": [ "127.0.0.1" ],
           "port": 51820
-         },
-         { // fa506ih ssh (only really needed for pyxis)
-          "action": "allow",
-          "network": "tcp",
-          "ip": [ "10.200.200.2" ],
-          "port": 22
          },
          {
           "action": "block",
@@ -105,13 +133,6 @@ let
         "ip": [ "127.0.0.1" ],
         "port": 51820,
         "network": "udp",
-        "outboundTag": "direct-out"
-       },
-       {
-        "ruleTag": "pysix-wireguard-hack",
-        "inboundTag": [ "vless-in" ],
-        "ip": [ "10.200.200.0/24" ],
-        "user": [ "pyxis@localhost" ],
         "outboundTag": "direct-out"
        },
        {
