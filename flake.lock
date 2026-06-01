@@ -147,12 +147,11 @@
         "narHash": "sha256-7FaJgrotbLvYGfGuUlKFLzaFIEQGxEVBSS4XJPQHME0=",
         "ref": "refs/heads/master",
         "rev": "5b9e95d01c04ed6b7faa376597c349ba362ad786",
-        "shallow": true,
+        "revCount": 92,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/nix-secrets.git"
       },
       "original": {
-        "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/heather7283/nix-secrets.git"
       }

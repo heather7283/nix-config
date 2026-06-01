@@ -6,7 +6,7 @@
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git?shallow=1";
+    secrets.url = "git+ssh://git@github.com/heather7283/nix-secrets.git";
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
