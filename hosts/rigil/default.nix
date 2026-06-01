@@ -49,7 +49,7 @@
 
     firewall = {
       enable = true;
-      #trustedInterfaces = [ "wg0" ];
+      trustedInterfaces = [ "wg0" ];
       allowedTCPPorts = [
         443 # https
       ];
