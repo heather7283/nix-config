@@ -30,12 +30,8 @@ in {
     serviceConfig = {
       Type = "simple";
       Restart = "always";
-      RestartSec = 5;
       ExecStart = with pkgs; "${labwc}/bin/labwc -C ${menu-xml}/labwc-config";
-      Environment = [
-        "WLR_BACKENDS=headless"
-        "WLR_LIBINPUT_NO_DEVICES=1"
-      ];
+      Environment = [ "WLR_BACKENDS=headless" "WLR_LIBINPUT_NO_DEVICES=1" ];
     };
   };
 
@@ -56,11 +52,8 @@ in {
     serviceConfig = {
       Type = "simple";
       Restart = "always";
-      RestartSec = 5;
-      ExecStart = with pkgs; "${wayvnc}/bin/wayvnc -C ${wayvnc-config}";
-      Environment = [
-        "WAYLAND_DISPLAY=wayland-0" # hack
-      ];
+      ExecStart = "${pkgs.wayvnc}/bin/wayvnc -C ${wayvnc-config}";
+      Environment = [ "WAYLAND_DISPLAY=wayland-0" ]; # hack
     };
   };
 
@@ -78,20 +71,14 @@ in {
     serviceConfig = {
       Type = "simple";
       Restart = "always";
-      RestartSec = 5;
-      ExecStart = with pkgs; "${swaybg}/bin/swaybg -i ${cat}";
-      Environment = [
-        "WAYLAND_DISPLAY=wayland-0" # hack
-      ];
+      ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${cat}";
+      Environment = [ "WAYLAND_DISPLAY=wayland-0" ]; # hack
     };
   };
 
   systemd.services.vnc-netns-proxy = let
     tun2socks-config = pkgs.writers.writeYAML "vnc-tun2socks-config.yaml" {
-      tunnel = {
-        name = tun-name;
-        mtu = 8500;
-      };
+      tunnel.name = tun-name;
       socks5 = {
         address = "127.0.0.1";
         port = 10808;
@@ -102,37 +89,29 @@ in {
       name = "vnc-netns-proxy.sh";
       runtimeInputs = [ coreutils iproute2 hev-socks5-tunnel ];
       text = ''
-        netns="${netns-name}"
-        tun="${tun-name}"
-        tunip="${tun-ip}"
-
-        # create netns itself
-        ip netns add "$netns"
-        # bring up lo in netns
-        ip -n "$netns" link set lo up
-
-        # create tun device outside of netns
-        ip tuntap add dev "$tun" mode tun
+        # create tun device in the root netns
+        ip tuntap add dev "${tun-name}" mode tun
 
         # let tun2socks open the tun device...
-        hev-socks5-tunnel ${tun2socks-config} &
-
-        # ..and wait for it to bring it up
+        hev-socks5-tunnel "${tun2socks-config}" &
+        # ..and wait for it to get brought up
         attempts=0
-        while ! ip link show "$tun" | grep -qFe 'state UP'; do
+        while ! ip link show "${tun-name}" | grep -qFe 'state UP'; do
             attempts=$(( attempts + 1 ))
-            if [ "$attempts" -gt 50 ]; then
+            if [ "$attempts" -gt 30 ]; then
                 echo "tun2socks didn't bring tun interface up"
                 exit 1
             fi
             sleep 0.1
         done
 
-        # now move the tun into netns and set up routing
-        ip link set "$tun" netns "$netns"
-        ip -n "$netns" link set "$tun" up
-        ip -n "$netns" addr add "$tunip" dev "$tun"
-        ip -n "$netns" route add default dev "$tun"
+        # now create netns, move tun iface there and set up routing
+        ip netns add "${netns-name}"
+        ip link set "${tun-name}" netns "${netns-name}"
+        ip -n "${netns-name}" link set lo up
+        ip -n "${netns-name}" link set "${tun-name}" up
+        ip -n "${netns-name}" addr add "${tun-ip}" dev "${tun-name}"
+        ip -n "${netns-name}" route add default dev "${tun-name}"
 
         wait
       '';
