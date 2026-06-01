@@ -87,9 +87,20 @@ in {
   };
 
   systemd.services.vnc-netns-proxy = let
+    tun2socks-config = pkgs.writers.writeYAML "vnc-tun2socks-config.yaml" {
+      tunnel = {
+        name = tun-name;
+        mtu = 8500;
+      };
+      socks5 = {
+        address = "127.0.0.1";
+        port = 10809;
+        udp = "udp";
+      };
+    };
     script = with pkgs; writeShellApplication {
       name = "vnc-netns-proxy.sh";
-      runtimeInputs = [ coreutils iproute2 unstable.xray ];
+      runtimeInputs = [ coreutils iproute2 hev-socks5-tunnel ];
       text = ''
         netns="${netns-name}"
         tun="${tun-name}"
@@ -103,56 +114,15 @@ in {
         # create tun device outside of netns
         ip tuntap add dev "$tun" mode tun
 
-        # let xray open the tun device...
-        xray run <<EOF &
-        {
-         "log": {
-          "loglevel": "error"
-         },
-         "inbounds": [
-          {
-           "protocol": "tun",
-           "port": 0,
-           "settings": {
-            "name": "$tun"
-           },
-           "sniffing": {
-            "enabled": true, "routeOnly": true, "destOverride": [ "http", "tls", "quic" ]
-           }
-          }
-         ],
-         "outbounds": [
-          {
-           "tag": "socks-out",
-           "protocol": "socks",
-           "settings": { "address": "127.0.0.1", "port": 10809 }
-          },
-          {
-           "tag": "dns-out",
-           "protocol": "dns",
-           "settings": {
-            "rewriteNetwork": "udp",
-            "rewriteAddress": "127.0.0.1",
-            "rewritePort": 53,
-            "rules": [{ "action": "direct" }]
-           }
-          }
-         ],
-         "routing": {
-          "domainStrategy": "AsIs",
-          "rules": [
-           { "port": 53, "outboundTag": "dns-out" }
-          ]
-         }
-        }
-        EOF
+        # let tun2socks open the tun device...
+        hev-socks5-tunnel ${tun2socks-config} &
 
         # ..and wait for it to bring it up
         attempts=0
         while ! ip link show "$tun" | grep -qFe 'state UP'; do
             attempts=$(( attempts + 1 ))
             if [ "$attempts" -gt 50 ]; then
-                echo "xray didn't bring tun interface up"
+                echo "tun2socks didn't bring tun interface up"
                 exit 1
             fi
             sleep 0.1
