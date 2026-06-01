@@ -134,6 +134,21 @@ in {
     };
   };
 
+  systemd.services.vnc-netns-forward = {
+    wantedBy = [ "multi-user.target" ];
+    bindsTo = [ "vnc-netns-proxy.service" ];
+    after = [ "vnc-netns-proxy.service" ];
+    serviceConfig = {
+      Type = "simple";
+      Restart = "on-failure";
+      ExecStart = builtins.concatStringsSep " " [
+        "${pkgs.socat}/bin/socat"
+        "TCP4-LISTEN:5900,fork,range=127.0.0.1/8"
+        "TCP4-CONNECT:127.0.0.1:5900,netns=vnc"
+      ];
+    };
+  };
+
   systemd.services."user@${builtins.toString config.users.users.vnc.uid}" = {
     overrideStrategy = "asDropin";
     bindsTo = [ "vnc-netns-proxy.service" ];
