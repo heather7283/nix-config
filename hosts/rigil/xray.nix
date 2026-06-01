@@ -3,16 +3,10 @@
 let
   ph = config.sops.placeholder;
 
-  clients = ph."xray/vless-in/settings/clients";
-  dest = ph."xray/vless-in/streamSettings/realitySettings/dest";
-  privateKey = ph."xray/vless-in/streamSettings/realitySettings/privateKey";
-  shortIds = ph."xray/vless-in/streamSettings/realitySettings/shortIds";
-  path = ph."xray/vless-in/streamSettings/xhttpSettings/path";
-
   xrayConfig = ''
     {
      "log": {
-      "loglevel": "info",
+      "loglevel": "error",
       "access": "/var/log/xray/access.log",
       "error": "/var/log/xray/error.log"
      },
@@ -39,26 +33,12 @@ let
      },
      "inbounds": [
       {
-       "tag": "vless-in",
-       "protocol": "vless",
-       "listen": "0.0.0.0",
-       "port": 443,
+       "tag": "socks-in",
+       "protocol": "socks",
+       "listen": "127.0.0.1",
+       "port": 10808,
        "settings": {
-        "clients": ${clients},
-        "decryption": "none"
-       },
-       "streamSettings": {
-        "network": "xhttp",
-        "security": "reality",
-        "realitySettings": {
-         "dest": "${dest}:443",
-         "serverNames": [ "${dest}" ],
-         "privateKey": "${privateKey}",
-         "shortIds": ${shortIds}
-        },
-        "xhttpSettings": {
-         "path": "${path}"
-        }
+        "udp": true
        },
        "sniffing": {
         "enabled": true,
@@ -146,7 +126,6 @@ let
        },
        {
         "ruleTag": "hijack-dns",
-        "inboundTag": [ "vless-in" ],
         "port": 53,
         "outboundTag": "dns-out"
        },
@@ -157,8 +136,7 @@ let
        },
        {
         "ruleTag": "warp-domains",
-        // reddit seems to have blocked my IP lmao
-        "domain": [ "geosite:category-ru", "geosite:reddit" ],
+        "domain": [ "geosite:category-ru" ],
         "outboundTag": "warp-out"
        },
        {
@@ -177,7 +155,7 @@ in {
   };
 
   services.xray = {
-    enable = false; # TODO: reenable
+    enable = true;
     settingsFile = config.sops.templates."xray-config.jsonc".path;
     # stable nixos has ancient geoip/domain list and I have no idea how to overwrite only those
     package = pkgs.unstable.xray;

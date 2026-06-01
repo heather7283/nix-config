@@ -94,7 +94,7 @@ in {
       };
       socks5 = {
         address = "127.0.0.1";
-        port = 10809;
+        port = 10808;
         udp = "udp";
       };
     };
