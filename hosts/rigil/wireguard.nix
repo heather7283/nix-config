@@ -34,51 +34,23 @@ in {
     net.ipv4.conf.all.route_localnet = 1;
   };
 
-  # TODO: configure
-  #networking.wireguard = {
-  #  useNetworkd = false;
-  #  interfaces.wg0 = let
-  #    peers = [
-  #      {
-  #        # fa506ih
-  #        publicKey = "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=";
-  #        allowedIPs = [ "10.200.200.2/32" ];
-  #      }
-  #      {
-  #        # pluto; proxima reachable through pluto
-  #        publicKey = "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=";
-  #        allowedIPs = [ "10.200.200.50/32" "10.200.200.41/32" ];
-  #      }
-  #      {
-  #        # qblue
-  #        publicKey = "n0PDD0Ro8A34wG5yjoaC71JzyvrUksqd1AFYpyDyQl4=";
-  #        allowedIPs = [ "10.200.200.10/32" ];
-  #      }
-  #    ];
-  #    rules = [
-  #      { ip = "10.200.200.2"; outer = 8000; protos = [ "tcp" ]; } # python's http server
-  #      #{ ip = "10.200.200.2"; outer = 16228; protos = [ "udp" ]; } # project zomboid
-  #      #{ ip = "10.200.200.10"; outer = 4533; protos = [ "tcp" ]; } # navidrome on qboxblue
-  #      { ip = "10.200.200.198"; outer = 50123; protos = [ "tcp" ]; } # kir's nonsense
-  #      { ip = "10.200.200.198"; outer = 26639; protos = [ "tcp" ]; } # kir's comfy ui
-  #    ];
-  #  in {
-  #    ips = [ "10.200.200.1/32" ];
-  #    listenPort = 51820;
-  #    privateKeyFile = config.sops.secrets."wireguard/private-key".path;
-  #    peers = peers;
-  #    postSetup = lib.concatLines ((wrapIptables [
-  #      "-I FORWARD -i wg0 -j ACCEPT"
-  #      "-I FORWARD -o wg0 -j ACCEPT"
-  #      "-t nat -I POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
-  #    ]) ++ (mkWgForwardRules "up" rules));
-  #    preShutdown = lib.concatLines ((wrapIptables [
-  #      "-D FORWARD -i wg0 -j ACCEPT"
-  #      "-D FORWARD -o wg0 -j ACCEPT"
-  #      "-t nat -D POSTROUTING -s 10.200.200.0/24 -o ens3 -j MASQUERADE"
-  #    ]) ++ (mkWgForwardRules "down" rules));
-  #  };
-  #};
+  networking.wireguard = {
+    useNetworkd = false;
+    interfaces.wg0 = let
+      peers = [
+        {
+          # fa506ih
+          publicKey = "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=";
+          allowedIPs = [ "10.200.200.2/32" ];
+        }
+      ];
+    in {
+      ips = [ "10.200.200.3/32" ];
+      listenPort = 51820;
+      privateKeyFile = config.sops.secrets."wireguard/private-key".path;
+      peers = peers;
+    };
+  };
 
   # DO NOT USE NIXOS' BUILTIN NAT AND PORT FORWARDING OPTIONS!!!
   # They do NOT work how I want. I spent 7 hours fighting it in the past.
