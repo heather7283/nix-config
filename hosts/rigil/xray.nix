@@ -39,7 +39,7 @@ let
      },
      "inbounds": [
       {
-       "tag": "socks-in",
+       "tag": "vnc-in",
        "protocol": "socks",
        "listen": "127.0.0.1",
        "port": 10808,
@@ -149,6 +149,11 @@ let
         "ruleTag": "hijack-dns",
         "port": 53,
         "outboundTag": "dns-out"
+       },
+       {
+        "ruleTag": "vnc-in-pluto-out",
+        "inboundTag": [ "vnc-in" ],
+        "outboundTag": "pluto-out"
        },
        {
         "ruleTag": "warp-ips",
