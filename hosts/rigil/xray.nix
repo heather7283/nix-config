@@ -39,7 +39,7 @@ let
      },
      "inbounds": [
       {
-       "tag": "vnc-in",
+       "tag": "vnc-tun-in",
        "protocol": "socks",
        "listen": "127.0.0.1",
        "port": 10808,
@@ -93,6 +93,12 @@ let
           "ip": [ "127.0.0.1" ],
           "port": 51820
          },
+         { // vnc
+          "action": "allow",
+          "network": "tcp",
+          "ip": [ "127.0.0.1" ],
+          "port": 5900
+         },
          {
           "action": "block",
           "ip": [ "geoip:ru" ]
@@ -136,6 +142,14 @@ let
         "outboundTag": "direct-out"
        },
        {
+        "ruleTag": "vnc",
+        "inboundTag": [ "vless-in" ],
+        "ip": [ "127.0.0.1" ],
+        "port": 5900,
+        "network": "tcp",
+        "outboundTag": "direct-out"
+       },
+       {
         "ruleTag": "block-private-ips",
         "ip": [ "geoip:private" ],
         "outboundTag": "block"
@@ -151,8 +165,8 @@ let
         "outboundTag": "dns-out"
        },
        {
-        "ruleTag": "vnc-in-pluto-out",
-        "inboundTag": [ "vnc-in" ],
+        "ruleTag": "vnc-tun-in-pluto-out",
+        "inboundTag": [ "vnc-tun-in" ],
         "outboundTag": "pluto-out"
        },
        {

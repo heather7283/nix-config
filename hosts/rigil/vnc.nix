@@ -143,7 +143,7 @@ in {
       Restart = "on-failure";
       ExecStart = builtins.concatStringsSep " " [
         "${pkgs.socat}/bin/socat"
-        "TCP4-LISTEN:5900,fork,range=10.200.200.0/24"
+        "TCP4-LISTEN:5900,fork,range=127.0.0.1/8"
         "TCP4-CONNECT:127.0.0.1:5900,netns=vnc"
       ];
     };
