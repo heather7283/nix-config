@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 with builtins; let
+  # TODO: rewrite all of this to work with nftables
   wrapIptables = commands: map (cmd: "${pkgs.iptables}/bin/iptables " + cmd) commands;
 
   cmdToIptablesArg = cmd:

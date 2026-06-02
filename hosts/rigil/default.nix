@@ -44,8 +44,7 @@
     useDHCP = false;
     useNetworkd = true;
 
-    # DO NOT USE. Does not work properly with my custom port forwarding rules
-    nftables.enable = false;
+    nftables.enable = true;
 
     firewall = {
       enable = true;
