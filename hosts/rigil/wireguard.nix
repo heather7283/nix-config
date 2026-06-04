@@ -2,7 +2,9 @@
 
 {
   networking.wireguard = {
-    useNetworkd = true;
+    # when networkd is used, wireguard-wg0.target doesn't exist,
+    # which breaks dependencies for units that listen on wg0 ip
+    useNetworkd = false;
     interfaces.wg0 = {
       ips = [ "10.20.30.1/32" ];
       listenPort = 51820;
