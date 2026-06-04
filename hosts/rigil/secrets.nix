@@ -18,7 +18,10 @@
 
       users.heather.password = _: { neededForUsers = true; };
 
-      grafana.admin_password = _: {};
+      grafana = {
+        admin_password = _: {};
+        secret_key = _: {};
+      };
 
       wireguard.private-key = _: {};
 

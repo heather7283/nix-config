@@ -2,13 +2,13 @@
 
 {
   services.prometheus = {
-    enable = false; # TODO: reenable
+    enable = true;
     listenAddress = "127.0.0.1";
     port = 9090;
 
     exporters = {
       node = {
-        enable = false; # TODO: reenable
+        enable = true;
         listenAddress = "127.0.0.1";
         port = 9091;
         enabledCollectors = [ "systemd" ];
@@ -26,8 +26,8 @@
     scrapeConfigs = with builtins; let
       instances = {
         "127.0.0.1" = "rigil";
-        "10.200.200.41" = "proxima";
-        "10.200.200.50" = "pluto";
+        "10.20.30.41" = "proxima";
+        "10.20.30.50" = "pluto";
       };
       relabel_configs = attrNames instances |> map (ip: {
         source_labels = [ "__address__" ];
@@ -49,10 +49,10 @@
   };
 
   services.grafana = {
-    enable = false; # TODO: reenable
+    enable = true;
     settings = {
       server = {
-        http_addr = "10.200.200.1";
+        http_addr = "10.20.30.1";
         http_port = 3000;
         enable_gzip = true;
       };
@@ -62,6 +62,7 @@
         # in cases where no interpolation is possible, e.g. configuration files of software
         # that does not yet support credentials natively.
         admin_password = "$__file{/run/credentials/grafana.service/admin_password}";
+        secret_key = "$__file{/run/credentials/grafana.service/secret_key}";
       };
     };
 
@@ -93,15 +94,18 @@
       }];
     };
   };
+
   systemd.services.grafana = {
-    enable = false; # TODO: reenable
-    # grafana listens on 10.200.200.1
+    # Why won't asDropin work here??????????????????????????????????????????
+    #overrideStrategy = "asDropin";
     bindsTo = [ "wireguard-wg0.target" ];
-    after = [ "wireguard-wg0.target" ];
-    # pass admin password from sops
-    serviceConfig.LoadCredential = [
-      "admin_password:${config.sops.secrets."grafana/admin_password".path}"
-    ];
+    after = [ "network.target" "wireguard-wg0.target" ];
+    serviceConfig = {
+      LoadCredential = [
+        "admin_password:${config.sops.secrets."grafana/admin_password".path}"
+        "secret_key:${config.sops.secrets."grafana/secret_key".path}"
+      ];
+    };
   };
 }
 

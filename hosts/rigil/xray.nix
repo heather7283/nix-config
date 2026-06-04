@@ -213,7 +213,7 @@ in {
   };
 
   services.prometheus.exporters.v2ray = {
-    enable = false; # TODO: reenable
+    enable = true;
     listenAddress = "127.0.0.1";
     port = 9092;
     v2rayEndpoint = "127.0.0.1:54321";
