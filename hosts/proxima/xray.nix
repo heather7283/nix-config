@@ -162,7 +162,7 @@ in {
 
   services.prometheus.exporters.v2ray = {
     enable = true;
-    listenAddress = "10.200.200.41";
+    listenAddress = "10.20.30.41";
     port = 9092;
     v2rayEndpoint = "127.0.0.1:54321";
   };

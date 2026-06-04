@@ -3,7 +3,7 @@
 {
   services.prometheus.exporters.node = {
     enable = true;
-    listenAddress = "10.200.200.41";
+    listenAddress = "10.20.30.41";
     port = 9091;
     enabledCollectors = [ "systemd" ];
   };

@@ -34,7 +34,7 @@
   # List services that you want to enable:
   services.openssh = {
     enable = true;
-    listenAddresses = [{ addr = "10.200.200.41"; port = 37643; }];
+    listenAddresses = [{ addr = "10.20.30.41"; port = 37643; }];
     openFirewall = false; # prevent 22 from being opened
     settings = {
       PermitRootLogin = "no";
@@ -61,19 +61,19 @@
       trustedInterfaces = [ "wg0" ];
     };
     wireguard.interfaces.wg0 = {
-      ips = [ "10.200.200.41/32" ];
+      ips = [ "10.20.30.41/32" ];
       listenPort = 51820;
       privateKeyFile = config.sops.secrets."wireguard/private-key".path;
       peers = [
         {
           # fa506ih
           publicKey = "diTNVpvmxrbdb/cGAX+442naDBBKUOVrqOuT6juWPGQ=";
-          allowedIPs = [ "10.200.200.2/32" ];
+          allowedIPs = [ "10.20.30.2/32" ];
         }
         {
           # pluto; rigil reachable through pluto
           publicKey = "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=";
-          allowedIPs = [ "10.200.200.50/32" "10.200.200.1/32" ];
+          allowedIPs = [ "10.20.30.50/32" "10.20.30.1/32" ];
         }
       ];
     };
