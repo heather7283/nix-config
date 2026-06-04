@@ -47,7 +47,6 @@
     ];
   };
 
-  # TODO: reenable
-  systemd.services.jmusicbot.enable = false;
+  systemd.services.jmusicbot.enable = true;
 }
 
