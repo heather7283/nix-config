@@ -201,8 +201,14 @@ in {
     package = pkgs.unstable.xray;
   };
   systemd.services.xray = {
-    # make sure /var/log/xray exists
-    serviceConfig.LogsDirectory = "xray";
+    serviceConfig = {
+      # make sure /var/log/xray exists
+      LogsDirectory = "xray";
+      # hopefully prioritise vpn over other services (surely that's a good idea)
+      Nice = -20;
+      CPUSchedulingPolicy = "fifo";
+      CPUSchedulingPriority = 99;
+    };
   };
 
   # I once had xray logs grow to 1 gig so yeah better set this up
