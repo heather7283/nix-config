@@ -51,6 +51,7 @@
       trustedInterfaces = [ "wg0" ];
       allowedTCPPorts = [
         443 # https
+        5201 # iperf3
       ];
       allowedUDPPorts = [
       ];
