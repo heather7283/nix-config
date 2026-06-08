@@ -6,6 +6,7 @@ let
   veth-inner = "warp-veth-inner";
   veth-outer-ip = "10.111.111.0";
   veth-inner-ip = "10.111.111.1";
+  # TODO: make this work with ipv6
 in {
   systemd.services.cf-warp-netns = let
     script-up = with pkgs; writeShellApplication {
@@ -39,6 +40,8 @@ in {
 
         ip route add default via "${veth-inner-ip}" dev "${veth-outer}" table 0xcfcf
         ip rule add fwmark 0xcfcf lookup 0xcfcf
+        # TODO: make this work with ipv6 instead of blackholing ipv6 traffic
+        ip -6 route add blackhole default table 0xcfcf
       '';
     };
     script-down = with pkgs; writeShellApplication {
@@ -49,6 +52,7 @@ in {
         ip netns delete "${netns}" || true
         ip route del default via "${veth-inner-ip}" dev "${veth-outer}" table 0xcfcf || true
         ip rule del fwmark 0xcfcf lookup 0xcfcf || true
+        ip -6 route del blackhole default table 0xcfcf || true
       '';
     };
   in {
