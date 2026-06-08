@@ -53,6 +53,15 @@ let
        }
       },
       {
+       "tag": "socks-test-in",
+       "protocol": "socks",
+       "listen": "127.0.0.1",
+       "port": 10888,
+       "settings": {
+        "udp": true
+       }
+      },
+      {
        "tag": "vless-in",
        "protocol": "vless",
        "listen": "0.0.0.0",
@@ -109,10 +118,11 @@ let
       },
       {
        "tag": "warp-out",
-       "protocol": "socks",
-       "settings": {
-        "address": "127.0.0.1",
-        "port": 10809
+       "protocol": "freedom",
+       "streamSettings": {
+        "sockopt": {
+         "mark": 53199 // 0xcfcf
+        }
        }
       },
       {
@@ -148,6 +158,11 @@ let
         "port": 5900,
         "network": "tcp",
         "outboundTag": "direct-out"
+       },
+       {
+        "ruleTag": "socks-test-in-warp-out",
+        "inboundTag": [ "socks-test-in" ],
+        "outboundTag": "warp-out"
        },
        {
         "ruleTag": "block-private-ips",

@@ -4,14 +4,13 @@ let
   netns = "warp";
   veth-outer = "warp-veth-outer";
   veth-inner = "warp-veth-inner";
-  veth-subnet = "10.111.111.0/31";
   veth-outer-ip = "10.111.111.0";
   veth-inner-ip = "10.111.111.1";
 in {
   systemd.services.cf-warp-netns = let
     script-up = with pkgs; writeShellApplication {
       name = "cf-warp-netns-up.sh";
-      runtimeInputs = [ iproute2 ];
+      runtimeInputs = [ iproute2 nftables ];
       text = ''
         ip netns add "${netns}"
         ip -n "${netns}" link set lo up
@@ -26,6 +25,20 @@ in {
         ip -n "${netns}" addr add "${veth-inner-ip}/31" dev "${veth-inner}"
 
         ip -n "${netns}" route add default via "${veth-outer-ip}" dev "${veth-inner}"
+
+        ip -n "${netns}" rule add iif "${veth-inner}" lookup 0x100cf
+
+        ip netns exec "${netns}" nft -f - <<'EOF'
+        table ip nat {
+          chain postrouting {
+            type nat hook postrouting priority srcnat;
+            oifname "CloudflareWARP" masquerade
+          }
+        }
+        EOF
+
+        ip route add default via "${veth-inner-ip}" dev "${veth-outer}" table 0xcfcf
+        ip rule add fwmark 0xcfcf lookup 0xcfcf
       '';
     };
     script-down = with pkgs; writeShellApplication {
@@ -34,6 +47,8 @@ in {
       text = ''
         ip link delete "${veth-outer}" || true
         ip netns delete "${netns}" || true
+        ip route del default via "${veth-inner-ip}" dev "${veth-outer}" table 0xcfcf || true
+        ip rule del fwmark 0xcfcf lookup 0xcfcf || true
       '';
     };
   in {
@@ -57,6 +72,9 @@ in {
     '';
   };
   networking.firewall.trustedInterfaces = [ veth-outer ];
+  networking.firewall.extraReversePathFilterRules = ''
+    ct state established,related accept
+  '';
 
   systemd.services.cf-warp = let
     settings-json = pkgs.writeText "warp-settings.json" ''
