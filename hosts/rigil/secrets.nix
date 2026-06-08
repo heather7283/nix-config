@@ -83,7 +83,7 @@
           sopsFile = lib.getAttrFromPath path paths;
           format = "json";
           key = "";
-          restartUnits = [ "cloudflare-warp.service" ];
+          restartUnits = [ "cf-warp.service" ];
         };
       };
     });
