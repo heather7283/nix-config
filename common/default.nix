@@ -26,7 +26,7 @@
     git
     age
     sops
-    curl
+    curlSane # see overlays/50-curl.nix
     rsync
     python3
     libarchive # bsdtar
