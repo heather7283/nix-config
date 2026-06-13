@@ -68,6 +68,7 @@
 
   environment.sessionVariables = {
     LESSSECURE_ALLOW = "lesskey"; # systemd runs less in "secure mode"
+    NH_SHOW_ACTIVATION_LOGS = "1"; # https://github.com/nix-community/nh/pull/479
   };
 
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
