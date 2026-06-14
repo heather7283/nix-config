@@ -159,6 +159,20 @@ in {
     };
   };
 
+  # warp-svc has a memleak, so restart it every day at 5am as a workaround
+  systemd.timers.cf-warp-restart = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*-*-* 05:00:00 Europe/Samara";
+    };
+  };
+  systemd.services.cf-warp-restart = {
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl restart cf-warp.service";
+    };
+  };
+
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "cloudflare-warp"
   ];
