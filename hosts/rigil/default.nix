@@ -13,8 +13,8 @@
   services.openssh = {
     enable = true;
     # TODO: wg
-    listenAddresses = [{ addr = "0.0.0.0"; port = 22; }];
-    openFirewall = true;
+    listenAddresses = [{ addr = "0.0.0.0"; port = 58422; }];
+    openFirewall = false;
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;
@@ -50,6 +50,7 @@
       enable = true;
       trustedInterfaces = [ "wg0" ];
       allowedTCPPorts = [
+        58422 # ssh
         443 # https
         5201 # iperf3
       ];
