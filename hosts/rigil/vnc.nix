@@ -12,8 +12,8 @@ in {
   };
 
   systemd.user.services.vnc-compositor = let
-    browser = "${pkgs.ungoogled-chromium}/bin/chromium";
-    terminal = "${pkgs.foot}/bin/foot";
+    browser = lib.getExe pkgs.firefox;
+    terminal = lib.getExe pkgs.foot;
     menu-xml = pkgs.writeTextDir "labwc-config/menu.xml" ''
       <?xml version="1.0" ?>
       <openbox_menu>
