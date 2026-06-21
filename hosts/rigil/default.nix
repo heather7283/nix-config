@@ -28,6 +28,8 @@
   system.nssModules = lib.mkForce [];
   services.nscd.enable = false;
 
+  ext.zram.enable = true;
+
   services.giorno = {
     enable = false;
     configFile = config.sops.secrets."giorno/config.toml".path;

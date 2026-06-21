@@ -11,22 +11,11 @@
   };
 
   boot.kernel.sysctl = lib.ext.flattenAttrs "." {
-    vm = {
-      # https://wiki.archlinux.org/title/Zram#Optimizing_swap_on_zram
-      swappiness = 180;
-      watermark_boost_factor = 0;
-      watermark_scale_factor = 125;
-      page-cluster = 0;
-    };
     # required for wireguard routing
     net.ipv4.ip_forward = 1;
   };
 
-  zramSwap = {
-    enable = true;
-    algorithm = "zstd";
-    priority = 200;
-  };
+  ext.zram.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
