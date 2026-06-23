@@ -179,8 +179,7 @@ in {
   services.xray = {
     enable = true;
     settingsFile = config.sops.templates."xray-config.jsonc".path;
-    # stable nixos has ancient geoip/domain list and I have no idea how to overwrite only those
-    package = pkgs.unstable.xray;
+    package = pkgs.xray;
   };
   systemd.services.xray = {
     # make sure /var/log/xray exists

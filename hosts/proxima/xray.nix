@@ -151,7 +151,7 @@ in {
   services.xray = {
     enable = true;
     settingsFile = config.sops.templates."xray-config.jsonc".path;
-    package = pkgs.unstable.xray;
+    package = pkgs.xray;
   };
   systemd.services.xray.serviceConfig.LogsDirectory = "xray";
 
