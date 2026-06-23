@@ -6,14 +6,17 @@ let
   veth-inner = "warp-veth-inner";
   veth-outer-ip = "10.111.111.0";
   veth-inner-ip = "10.111.111.1";
-  # TODO: make this work with ipv6
+  veth-outer-ip6 = "fd00:cf::0";
+  veth-inner-ip6 = "fd00:cf::1";
 in {
   systemd.services.cf-warp-netns = let
     script-up = with pkgs; writeShellApplication {
       name = "cf-warp-netns-up.sh";
-      runtimeInputs = [ iproute2 nftables ];
+      runtimeInputs = [ iproute2 nftables sysctl ];
       text = ''
         ip netns add "${netns}"
+        ip netns exec "${netns}" sysctl -w net.ipv4.ip_forward=1
+        ip netns exec "${netns}" sysctl -w net.ipv6.conf.all.forwarding=1
         ip -n "${netns}" link set lo up
 
         ip link add "${veth-outer}" type veth peer name "${veth-inner}"
@@ -21,16 +24,20 @@ in {
 
         ip link set "${veth-outer}" up
         ip addr add "${veth-outer-ip}/31" dev "${veth-outer}"
+        ip -6 addr add "${veth-outer-ip6}/127" dev "${veth-outer}"
 
         ip -n "${netns}" link set "${veth-inner}" up
         ip -n "${netns}" addr add "${veth-inner-ip}/31" dev "${veth-inner}"
+        ip -n "${netns}" -6 addr add "${veth-inner-ip6}/127" dev "${veth-inner}"
 
         ip -n "${netns}" route add default via "${veth-outer-ip}" dev "${veth-inner}"
+        ip -n "${netns}" -6 route add default via "${veth-outer-ip6}" dev "${veth-inner}"
 
         ip -n "${netns}" rule add iif "${veth-inner}" lookup 0x100cf
+        ip -n "${netns}" -6 rule add iif "${veth-inner}" lookup 0x100cf
 
         ip netns exec "${netns}" nft -f - <<'EOF'
-        table ip nat {
+        table inet nat {
           chain postrouting {
             type nat hook postrouting priority srcnat;
             oifname "CloudflareWARP" masquerade
@@ -40,8 +47,8 @@ in {
 
         ip route add default via "${veth-inner-ip}" dev "${veth-outer}" table 0xcfcf
         ip rule add fwmark 0xcfcf lookup 0xcfcf
-        # TODO: make this work with ipv6 instead of blackholing ipv6 traffic
-        ip -6 route add blackhole default table 0xcfcf
+        ip -6 route add default via "${veth-inner-ip6}" dev "${veth-outer}" table 0xcfcf
+        ip -6 rule add fwmark 0xcfcf lookup 0xcfcf
       '';
     };
     script-down = with pkgs; writeShellApplication {
@@ -52,7 +59,8 @@ in {
         ip netns delete "${netns}" || true
         ip route del default via "${veth-inner-ip}" dev "${veth-outer}" table 0xcfcf || true
         ip rule del fwmark 0xcfcf lookup 0xcfcf || true
-        ip -6 route del blackhole default table 0xcfcf || true
+        ip -6 route del default via "${veth-inner-ip6}" dev "${veth-outer}" table 0xcfcf || true
+        ip -6 rule del fwmark 0xcfcf lookup 0xcfcf || true
       '';
     };
   in {
@@ -72,6 +80,7 @@ in {
       chain postrouting {
         type nat hook postrouting priority srcnat;
         ip saddr ${veth-inner-ip} oifname "ens3" masquerade
+        ip6 saddr ${veth-inner-ip6} oifname "ens3" masquerade
       }
     '';
   };
