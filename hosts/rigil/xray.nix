@@ -37,6 +37,11 @@ let
        "statsOutboundDownlink": true
       }
      },
+     "dns": {
+      "servers": [{ "address": "127.0.0.1", "port": 53, "finalQuery": true }],
+      "queryStrategy": "UseIP",
+      "disableCache": true
+     },
      "inbounds": [
       {
        "tag": "vnc-tun-in",
