@@ -182,9 +182,9 @@ in {
         binary = pkgs.ext.fetchGitHubRelease {
           owner = "Moroka8";
           repo = "vk-turn-proxy";
-          tag = "v1.10.0";
+          tag = "v1.10.1";
           asset = "server-linux-amd64";
-          sha256 = "sha256-7Sd7Mgxcv82AhDH97DL9tknc1DliCH/pEb7K7CkBdUw=";
+          sha256 = "sha256-hvZQtyItyBQ+XphEaf1R8Tu/n1gOSlz8Pv8+nz/AXGA=";
         };
       in pkgs.writeShellScript "vk-turn-proxy-start.sh" ''
         # do not set -x or the key will leak into journal lmao
