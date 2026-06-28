@@ -45,6 +45,11 @@
         metrics_path = "/scrape";
         static_configs = [{ targets = attrNames instances |> map (ip: "${ip}:9092"); }];
       }
+      {
+        job_name = "tor-bridge";
+        metrics_path = "/metrics";
+        static_configs = [{ targets = [ "127.0.0.1:27384" ]; }];
+      }
     ];
   };
 
