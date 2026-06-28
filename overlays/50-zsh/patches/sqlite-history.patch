@@ -1,8 +1,8 @@
 diff --git a/.gitignore b/.gitignore
-index ec2f56642..b25fb4512 100644
+index b8922ef6f..bb9564ee9 100644
 --- a/.gitignore
 +++ b/.gitignore
-@@ -153,5 +153,15 @@ Src/Zle/widgets.list
+@@ -153,6 +153,16 @@ Src/Zle/widgets.list
  Src/Zle/zle_things.h
  Src/Zle/zle_widget.h
  
@@ -18,12 +18,13 @@ index ec2f56642..b25fb4512 100644
 +
  Test/*.tmp
  /.project
+ .DS_Store
 diff --git a/Src/SqliteHistory/sqlite_history.c b/Src/SqliteHistory/sqlite_history.c
 new file mode 100644
-index 000000000..ed27cae5d
+index 000000000..df374d365
 --- /dev/null
 +++ b/Src/SqliteHistory/sqlite_history.c
-@@ -0,0 +1,411 @@
+@@ -0,0 +1,413 @@
 +#include "sqlite_history.mdh"
 +#include "sqlite_history.pro"
 +
@@ -31,12 +32,12 @@ index 000000000..ed27cae5d
 +
 +#define INFO(msg, ...) \
 +    do { \
-+        if (g.verbose) printf("sqlite_history: " msg "\n", ##__VA_ARGS__); \
++        if (g.verbose) printf("sqlite-history: " msg "\n", ##__VA_ARGS__); \
 +    } while (0)
 +#define ERROR(msg, ...) \
-+    fprintf(stderr, "sqlite_history: " msg "\n", ##__VA_ARGS__)
++    fprintf(stderr, "sqlite-history: " msg "\n", ##__VA_ARGS__)
 +
-+#define DB_VERSION 2
++#define DB_VERSION 3
 +
 +static struct {
 +    sqlite3 *db;
@@ -150,7 +151,7 @@ index 000000000..ed27cae5d
 +start_session(long *id)
 +{
 +    static const char sql[] =
-+        "INSERT INTO sessions ( created_at ) VALUES ( unixepoch() ) RETURNING id;"
++        "INSERT INTO sessions ( started_at ) VALUES ( unixepoch() ) RETURNING id;"
 +    ;
 +
 +    bool ret = true;
@@ -202,6 +203,8 @@ index 000000000..ed27cae5d
 +        ");\n",
 +        /* db version 2 - add index on started_at for faster listing */
 +        "CREATE INDEX idx_commands_started_at ON commands ( started_at );\n",
++	/* db version 3 - rename created_at to started_at */
++	"ALTER TABLE sessions RENAME COLUMN created_at TO started_at;\n",
 +    };
 +
 +    if (version > DB_VERSION) {
@@ -209,7 +212,7 @@ index 000000000..ed27cae5d
 +              version, DB_VERSION);
 +        return false;
 +    } else while (version < DB_VERSION) {
-+        INFO("sqlite_history: migration %d -> %d", version, version + 1);
++        INFO("sqlite-history: migration %d -> %d", version, version + 1);
 +        if (!exec(migrations[version]) || !set_user_version(++version)) {
 +            return false;
 +        }
@@ -311,7 +314,7 @@ index 000000000..ed27cae5d
 +        return 0;
 +    }
 +
-+    INFO("sqlite_history: last item: stim=%lu ftim=%lu text=%s",
++    INFO("sqlite-history: last item: stim=%lu ftim=%lu text=%s",
 +         he->stim, he->ftim, he->node.nam);
 +
 +    if (!save_histent(he)) {
@@ -367,10 +370,10 @@ index 000000000..ed27cae5d
 +}
 +
 +static struct builtin bintab[] = {
-+    BUILTIN("sqlite_history_open", 0, sqlite_history_open, 1, 1, 0, "v", NULL),
-+    BUILTIN("sqlite_history_close", 0, sqlite_history_close, 0, 0, 0, "", NULL),
-+    BUILTIN("sqlite_history_save", 0, sqlite_history_save, 0, 0, 0, "", NULL),
-+    BUILTIN("sqlite_history_list", 0, sqlite_history_list, 0, 0, 0, "zr", NULL),
++    BUILTIN("sqlite-history-open", 0, sqlite_history_open, 1, 1, 0, "v", NULL),
++    BUILTIN("sqlite-history-close", 0, sqlite_history_close, 0, 0, 0, "", NULL),
++    BUILTIN("sqlite-history-save", 0, sqlite_history_save, 0, 0, 0, "", NULL),
++    BUILTIN("sqlite-history-list", 0, sqlite_history_list, 0, 0, 0, "zr", NULL),
 +};
 +
 +static struct features module_features = {
@@ -450,7 +453,7 @@ index 000000000..26422d911
 +objects="sqlite_history.o"
 +
 diff --git a/configure.ac b/configure.ac
-index 5002cca8b..0be78d1f4 100644
+index 3d8e98a83..a724e8156 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -436,6 +436,17 @@ dnl Do you want to look for capability support?
@@ -470,8 +473,8 @@ index 5002cca8b..0be78d1f4 100644
 +
  # Default off for licensing reasons
  AC_ARG_ENABLE(gdbm,
- AS_HELP_STRING([--enable-gdbm],[enable the search for the GDBM library (see the zsh/db/gdbm module)]),
-@@ -1328,6 +1339,12 @@ if test x$enable_cap = xyes; then
+ AS_HELP_STRING([--enable-gdbm],[enable the search for the GDBM library (see the zsh/db/gdbm module)]))
+@@ -1364,6 +1375,12 @@ if test x$enable_cap = xyes; then
    AC_CHECK_FUNCS(cap_get_proc)
  fi
  
