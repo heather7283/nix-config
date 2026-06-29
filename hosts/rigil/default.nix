@@ -53,7 +53,6 @@
       trustedInterfaces = [ "wg0" ];
       allowedTCPPorts = [
         58422 # ssh
-        443 # https
         5201 # iperf3
       ];
       allowedUDPPorts = [

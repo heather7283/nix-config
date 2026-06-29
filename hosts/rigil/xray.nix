@@ -70,7 +70,7 @@ let
        "tag": "vless-in",
        "protocol": "vless",
        "listen": "0.0.0.0",
-       "port": 443,
+       "port": 8443,
        "settings": {
         "clients": ${clients},
         "decryption": "none"
@@ -229,6 +229,8 @@ in {
       CPUSchedulingPriority = 99;
     };
   };
+
+  networking.firewall.allowedTCPPorts = [ 8443 ];
 
   # I once had xray logs grow to 1 gig so yeah better set this up
   services.logrotate.settings."/var/log/xray/*.log" = {
