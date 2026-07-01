@@ -99,9 +99,10 @@ in {
       }
     '';
   in {
-    after = [ "network-online.target" "cf-warp-netns.service" ];
-    wants = [ "network-online.target" ];
+    after = [ "cf-warp-netns.service" ];
+    requires = [ "cf-warp-netns.service" ];
     bindsTo = [ "cf-warp-netns.service" ];
+    partOf = [ "cf-warp-netns.service" ];
     wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {
