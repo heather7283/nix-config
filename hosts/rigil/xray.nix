@@ -56,7 +56,7 @@ let
         "destOverride": [ "http", "tls", "quic" ],
         "routeOnly": true
        }
-      },
+      }/*,
       {
        "tag": "socks-test-in",
        "protocol": "socks",
@@ -65,7 +65,7 @@ let
        "settings": {
         "udp": true
        }
-      },
+      }*/,
       {
        "tag": "vless-in",
        "protocol": "vless",
@@ -97,6 +97,15 @@ let
      ],
      "outbounds": [
       {
+       "tag": "warp-out",
+       "protocol": "freedom",
+       "streamSettings": {
+        "sockopt": {
+         "mark": 53199 // 0xcfcf
+        }
+       }
+      },
+      {
        "tag": "direct-out",
        "protocol": "freedom",
        "settings": {
@@ -119,15 +128,6 @@ let
          }
          // implicit catch-all is to block private ranges
         ]
-       }
-      },
-      {
-       "tag": "warp-out",
-       "protocol": "freedom",
-       "streamSettings": {
-        "sockopt": {
-         "mark": 53199 // 0xcfcf
-        }
        }
       },
       {
@@ -163,11 +163,17 @@ let
         "port": 5900,
         "network": "tcp",
         "outboundTag": "direct-out"
-       },
+       }/*,
        {
         "ruleTag": "socks-test-in-warp-out",
         "inboundTag": [ "socks-test-in" ],
         "outboundTag": "warp-out"
+       }*/,
+       {
+        // this is placed before private block to allow DNS traffic from xray itself
+        "ruleTag": "hijack-dns",
+        "port": 53,
+        "outboundTag": "dns-out"
        },
        {
         "ruleTag": "block-private-ips",
@@ -180,15 +186,10 @@ let
         "outboundTag": "block"
        },
        {
-        "ruleTag": "hijack-dns",
-        "port": 53,
-        "outboundTag": "dns-out"
-       },
-       {
         "ruleTag": "vnc-tun-in-pluto-out",
         "inboundTag": [ "vnc-tun-in" ],
         "outboundTag": "pluto-out"
-       },
+       }/*,
        {
         "ruleTag": "warp-ips",
         "ip": [ "geoip:ru" ],
@@ -203,7 +204,7 @@ let
         "ruleTag": "warp-vless-route-0001",
         "vlessRoute": 1,
         "outboundTag": "warp-out"
-       }
+       }*/
       ]
      }
     }
