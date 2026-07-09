@@ -50,6 +50,11 @@
         metrics_path = "/metrics";
         static_configs = [{ targets = [ "127.0.0.1:27384" ]; }];
       }
+      {
+        job_name = "snowflake-proxy";
+        metrics_path = "/internal/metrics";
+        static_configs = [{ targets = [ "127.0.0.1:9094" ]; }];
+      }
     ];
   };
 
