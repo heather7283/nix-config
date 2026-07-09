@@ -14,6 +14,7 @@
         set shiftwidth=4
         set number
         set autochdir
+        set ignorecase smartcase
 
         lua << EOF
         vim.api.nvim_set_hl(0, "TrailingWhitespace", { bg = "red", ctermbg = "red" })
