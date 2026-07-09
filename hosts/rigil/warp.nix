@@ -65,6 +65,8 @@ in {
     };
   in {
     wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    wants = [ "network.target" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -104,6 +106,10 @@ in {
     bindsTo = [ "cf-warp-netns.service" ];
     partOf = [ "cf-warp-netns.service" ];
     wantedBy = [ "multi-user.target" ];
+
+    unitConfig = {
+      StopPropagatedFrom = [ "cf-warp-netns.service" ];
+    };
 
     serviceConfig = {
       Type = "simple";
