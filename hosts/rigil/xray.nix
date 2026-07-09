@@ -231,7 +231,18 @@ in {
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 8443 ];
+  networking = {
+    firewall.allowedTCPPorts = [ 443 8443 ];
+    nftables.tables.xray-443-redirect = {
+      family = "inet";
+      content = ''
+        chain prerouting {
+          type nat hook prerouting priority dstnat;
+          iifname ens3 tcp dport 443 redirect to :8443
+        }
+      '';
+    };
+  };
 
   # I once had xray logs grow to 1 gig so yeah better set this up
   services.logrotate.settings."/var/log/xray/*.log" = {
