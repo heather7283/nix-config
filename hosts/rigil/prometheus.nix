@@ -35,7 +35,12 @@
         regex = "${ip}:[0-9]+";
         replacement = getAttr ip instances;
       });
-    in map (e: { inherit relabel_configs; } // e) [
+      metric_relabel_configs = [{
+        source_labels = [ "__name__" ];
+        regex = ''^(go|process|promhttp)_.*$'';
+        action = "drop";
+      }];
+    in map (e: { inherit relabel_configs metric_relabel_configs; } // e) [
       {
         job_name = "node";
         static_configs = [{ targets = attrNames instances |> map (ip: "${ip}:9091"); }];
