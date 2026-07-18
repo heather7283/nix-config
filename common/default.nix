@@ -34,6 +34,7 @@
     python3
     libarchive # bsdtar
     foot.terminfo # so that ssh doesn't explode
+    nh
   ];
 
   systemd.settings.Manager = {
