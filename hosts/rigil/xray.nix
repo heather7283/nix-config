@@ -56,16 +56,16 @@ let
         "destOverride": [ "http", "tls", "quic" ],
         "routeOnly": true
        }
-      }/*,
+      },
       {
-       "tag": "socks-test-in",
+       "tag": "socks-in",
        "protocol": "socks",
-       "listen": "127.0.0.1",
-       "port": 10888,
+       "listen": "0.0.0.0", // this must be 0.0.0.0 for podman shenanigans
+       "port": 10808,
        "settings": {
         "udp": true
        }
-      }*/,
+      },
       {
        "tag": "vless-in",
        "protocol": "vless",
@@ -163,12 +163,12 @@ let
         "port": 5900,
         "network": "tcp",
         "outboundTag": "direct-out"
-       }/*,
+       },
        {
-        "ruleTag": "socks-test-in-warp-out",
-        "inboundTag": [ "socks-test-in" ],
+        "ruleTag": "socks-in-warp-out",
+        "inboundTag": [ "socks-in" ],
         "outboundTag": "warp-out"
-       }*/,
+       },
        {
         // this is placed before private block to allow DNS traffic from xray itself
         "ruleTag": "hijack-dns",
