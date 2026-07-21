@@ -81,7 +81,7 @@ in {
       tunnel.name = tun-name;
       socks5 = {
         address = "127.0.0.1";
-        port = 10808;
+        port = 10888;
         udp = "udp";
       };
     };

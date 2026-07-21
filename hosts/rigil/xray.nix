@@ -47,7 +47,7 @@ let
        "tag": "vnc-tun-in",
        "protocol": "socks",
        "listen": "127.0.0.1",
-       "port": 10808,
+       "port": 10888,
        "settings": {
         "udp": true
        },
