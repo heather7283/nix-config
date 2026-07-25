@@ -120,6 +120,7 @@
         "admin_password:${config.sops.secrets."grafana/admin_password".path}"
         "secret_key:${config.sops.secrets."grafana/secret_key".path}"
       ];
+      LogLevelMax = "notice"; # fucking spammer
     };
   };
 }
