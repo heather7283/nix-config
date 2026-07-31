@@ -10,19 +10,14 @@ in {
 
   services.openssh = {
     enable = true;
-    # TODO: wg
-    listenAddresses = [{ addr = "0.0.0.0"; port = sshPort; }];
-    openFirewall = false;
+    # NOTE: some modules (fail2ban, firewall) only check this option (and NOT listenAddresses)
+    ports = [ sshPort ];
+    openFirewall = true;
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;
     };
   };
-  # fix sshd starting before wireguard interfce is up
-  #systemd.services.sshd.bindsTo = [ "wireguard-wg0.target" ];
-  #systemd.services.sshd.after = [ "wireguard-wg0.target" ];
-
-  networking.firewall.allowedTCPPorts = [ sshPort ];
 
   services.fail2ban.enable = true;
 }
