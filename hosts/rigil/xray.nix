@@ -116,6 +116,10 @@ let
           "ip": [ "127.0.0.1" ],
           "port": 51820
          },
+         { // wireguard subnet (for pyxis)
+          "action": "allow",
+          "ip": [ "10.20.30.0/24" ]
+         },
          { // vnc
           "action": "allow",
           "network": "tcp",
@@ -162,6 +166,13 @@ let
         "ip": [ "127.0.0.1" ],
         "port": 5900,
         "network": "tcp",
+        "outboundTag": "direct-out"
+       },
+       {
+        "ruleTag": "wireguard-subnet",
+        "inboundTag": [ "vless-in" ],
+        "ip": [ "10.20.30.0/24" ],
+        "user": "pyxis@localhost",
         "outboundTag": "direct-out"
        },
        {
