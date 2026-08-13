@@ -23,6 +23,8 @@
         page-cluster = 0;
       };
     };
+
+    boot.zswap.enable = false;
   };
 }
 
