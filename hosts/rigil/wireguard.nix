@@ -6,7 +6,7 @@
     # which breaks dependencies for units that listen on wg0 ip
     useNetworkd = false;
     interfaces.wg0 = {
-      ips = [ "10.20.30.1/32" ];
+      ips = [ "10.20.30.1/24" ];
       listenPort = 51820;
       privateKeyFile = config.sops.secrets."wireguard/private-key".path;
       peers = [
