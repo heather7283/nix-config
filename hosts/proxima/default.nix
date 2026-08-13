@@ -24,8 +24,8 @@
   # List services that you want to enable:
   services.openssh = {
     enable = true;
-    listenAddresses = [{ addr = "0.0.0.0"; port = 37643; }];
-    openFirewall = false; # prevent 22 from being opened
+    ports = [ 37643 ];
+    openFirewall = true;
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;
@@ -47,7 +47,6 @@
     firewall = {
       enable = true;
       trustedInterfaces = [ "wg0" ];
-      allowedTCPPorts = [ 37643 ]; # sshd
     };
     wireguard.interfaces.wg0 = {
       ips = [ "10.20.30.41/32" ];
