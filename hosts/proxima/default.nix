@@ -6,7 +6,8 @@
   users.users.heather = {
     hashedPasswordFile = config.sops.secrets."users/heather/password".path;
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBEQ9exoJqJbq3xbIsCyZUO1NfzgM21yjHbyFzQTOpKt"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBEQ9exoJqJbq3xbIsCyZUO1NfzgM21yjHbyFzQTOpKt FA506IH"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBQWEBASwoalfi6WxRcGxqQZ25LlfuWO2HApjg7MtjAj pyxis"
     ];
   };
 
