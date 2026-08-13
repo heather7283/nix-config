@@ -49,7 +49,7 @@
       trustedInterfaces = [ "wg0" ];
     };
     wireguard.interfaces.wg0 = {
-      ips = [ "10.20.30.41/32" ];
+      ips = [ "10.20.30.41/24" ];
       listenPort = 51820;
       privateKeyFile = config.sops.secrets."wireguard/private-key".path;
       peers = [
