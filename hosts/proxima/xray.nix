@@ -91,6 +91,10 @@ let
           "network": "udp",
           "ip": [ "127.0.0.1" ],
           "port": 51820
+         },
+         { // wireguard subnet
+          "action": "allow",
+          "ip": [ "10.20.30.0/24" ]
          }
          // implicit catch-all is to block private ranges
         ]
@@ -116,6 +120,12 @@ let
         "ip": [ "127.0.0.1" ],
         "port": 51820,
         "network": "udp",
+        "outboundTag": "direct-out"
+       },
+       {
+        "ruleTag": "wireguard-subnet",
+        "user": [ "pyxis@localhost" ],
+        "ip": [ "10.20.30.0/24" ],
         "outboundTag": "direct-out"
        },
        {
