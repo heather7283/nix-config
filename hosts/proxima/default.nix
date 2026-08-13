@@ -16,8 +16,6 @@
     net.ipv4.ip_forward = 1;
   };
 
-  ext.zram.enable = true;
-
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
 
