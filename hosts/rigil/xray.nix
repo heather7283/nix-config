@@ -172,7 +172,7 @@ let
         "ruleTag": "wireguard-subnet",
         "inboundTag": [ "vless-in" ],
         "ip": [ "10.20.30.0/24" ],
-        "user": "pyxis@localhost",
+        "user": [ "pyxis@localhost" ],
         "outboundTag": "direct-out"
        },
        {
