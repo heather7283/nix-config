@@ -25,6 +25,7 @@
   virtualisation.quadlet.containers.jmusicbot = {
     containerConfig = {
       Image = "docker.io/library/eclipse-temurin:25-jre";
+      AutoUpdate = "registry";
       Volume = let
         jar = pkgs.ext.fetchGitHubRelease rec {
           owner = "Cosgy-Dev";
