@@ -65,5 +65,13 @@
     mode = "0644";
     restartUnits = [ "systemd-networkd.service" ];
   };
+
+  virtualisation.quadlet = {
+    enable = true;
+    autoUpdate = {
+      enable = true;
+      startAt = "*-*-* 08:00:00 Europe/Samara";
+    };
+  };
 }
 
