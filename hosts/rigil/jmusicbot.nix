@@ -8,6 +8,7 @@
       owner = ${config.sops.placeholder."jmusicbot/owner"}
 
       altprefix = "!"
+      helptodm = false
 
       aliases {
         nowplaying = [ np ]
