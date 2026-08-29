@@ -86,6 +86,8 @@
           restartUnits = [ "cf-warp.service" ];
         };
       };
+
+      harmonia.signKey = _: {};
     });
   };
 }
