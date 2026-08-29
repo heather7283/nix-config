@@ -50,6 +50,10 @@
     DefaultRestartSec = 3;
     DefaultStartLimitIntervalSec = 0;
   };
+  services.journald.extraConfig = ''
+    SystemMaxUse=1G
+    MaxRetentionSec=1month
+  '';
 
   programs.less.commands = {
     h = "left-scroll";
