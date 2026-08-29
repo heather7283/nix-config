@@ -68,5 +68,11 @@
   nix.settings = {
     max-jobs = 1;
     cores = 1;
+    extra-substituters = [
+      "http://10.20.30.1:5000"
+    ];
+    extra-trusted-public-keys = [
+      "rigil-1:As1MsY917igYLe1KtSu8cNDtZp7WMJIcVBdbv37nG/s="
+    ];
   };
 }
