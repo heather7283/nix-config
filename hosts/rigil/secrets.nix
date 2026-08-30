@@ -88,6 +88,10 @@
       };
 
       harmonia.signKey = _: {};
+
+      pixivfe.env = _: {
+        restartUnits = [ "pixivfe.service" ];
+      };
     });
   };
 }
