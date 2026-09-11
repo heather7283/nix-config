@@ -28,6 +28,10 @@ jobs:
           signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
+      - name: Fixup git URLs
+        run: |
+          git config --global url.'https://${{ secrets.GH_TOKEN }}@github.com'.insteadOf 'git@github.com:'
+
       - name: Build system
         run: |
           nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
