@@ -30,7 +30,7 @@ jobs:
 
       - name: Fixup git URLs
         run: |
-          git config --global url.'https://${{ secrets.GH_TOKEN }}@github.com'.insteadOf 'git@github.com:'
+          git config --global url.'https://${{ secrets.GH_TOKEN }}@github.com'.insteadOf 'ssh://git@github.com'
 
       - name: Build system
         run: |
