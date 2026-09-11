@@ -57,24 +57,25 @@ in {
     };
   };
 
-  systemd.user.services.vnc-swaybg = let
-    cat = pkgs.fetchurl {
-      url =
-        "https://publicdomainpictures.net/pictures/140000/velka/cat-in-the-grass-1449361188Hqe.jpg";
-      hash = "sha256-ODhB2DtLy7nUvskvHhXHiq28j2WOSnpEl4tANw337bc=";
-    };
-  in {
-    wantedBy = [ "default.target" ];
-    bindsTo = [ "vnc-compositor.service" ];
-    after = [ "vnc-compositor.service" ];
-    unitConfig.ConditionUser = "vnc";
-    serviceConfig = {
-      Type = "simple";
-      Restart = "always";
-      ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${cat}";
-      Environment = [ "WAYLAND_DISPLAY=wayland-0" ]; # hack
-    };
-  };
+  # TODO: I love the cat but publicdomainpictures.net returns 403 in gh actions
+  #systemd.user.services.vnc-swaybg = let
+  #  cat = pkgs.fetchurl {
+  #    url =
+  #      "https://publicdomainpictures.net/pictures/140000/velka/cat-in-the-grass-1449361188Hqe.jpg";
+  #    hash = "sha256-ODhB2DtLy7nUvskvHhXHiq28j2WOSnpEl4tANw337bc=";
+  #  };
+  #in {
+  #  wantedBy = [ "default.target" ];
+  #  bindsTo = [ "vnc-compositor.service" ];
+  #  after = [ "vnc-compositor.service" ];
+  #  unitConfig.ConditionUser = "vnc";
+  #  serviceConfig = {
+  #    Type = "simple";
+  #    Restart = "always";
+  #    ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${cat}";
+  #    Environment = [ "WAYLAND_DISPLAY=wayland-0" ]; # hack
+  #  };
+  #};
 
   systemd.services.vnc-netns-proxy = let
     tun2socks-config = pkgs.writers.writeYAML "vnc-tun2socks-config.yaml" {

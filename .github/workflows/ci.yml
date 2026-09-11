@@ -27,17 +27,19 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           # Part of the key AFTER the colon (this also applies to public key)
           # To register a public key in cachix without using their CLI do this:
-          # curl -i -X POST -H "Authorization: Bearer XXX" \
+          # curl -i -X POST \
+          #    -H "Authorization: Bearer PersonalAuthToken" \
           #    -H "Content-Type: application/json" \
           #    -d '{ "publicKey": "key-after-the-colon-very-important" }' \
-          #    https://app.cachix.org/api/v1/cache/heather7283/key
+          #    https://app.cachix.org/api/v1/cache/cache-name/key
           signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
       - name: Fixup git URLs
         run: |
-          git config --global url.'https://${{ secrets.GH_TOKEN }}@github.com'.insteadOf 'ssh://git@github.com'
+          git config --global \
+            url.'https://${{ secrets.GH_TOKEN }}@github.com'.insteadOf 'ssh://git@github.com'
 
-      - name: Build system
+      - name: Build NixOS configuration
         run: |
           nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
 
