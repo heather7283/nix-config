@@ -162,6 +162,8 @@ in {
       in
         "${resolv-conf}:/etc/resolv.conf"
       ;
+      # give this user a very low priority (browser is very CPU heavy)
+      CPUSchedulingPolicy = "idle";
     };
   };
 }
