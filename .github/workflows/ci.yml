@@ -24,7 +24,6 @@ jobs:
       - uses: cachix/cachix-action@v17
         with:
           name: heather7283
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           # Part of the key AFTER the colon (this also applies to public key)
           # To register a public key in cachix without using their CLI do this:
           # curl -i -X POST \
@@ -33,6 +32,9 @@ jobs:
           #    -d '{ "publicKey": "key-after-the-colon-very-important" }' \
           #    https://app.cachix.org/api/v1/cache/cache-name/key
           signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          # Nice 800+ MB .jar bro
+          pushFilter: '^.*[jJ][mM]usic[bB]ot.*$'
 
       - name: Fixup git URLs
         run: |
