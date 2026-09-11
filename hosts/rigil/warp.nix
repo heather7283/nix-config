@@ -177,6 +177,7 @@ in {
 
   # warp-svc has a memleak, so restart it every day at 5am as a workaround
   systemd.timers.cf-warp-restart = {
+    enable = false; # too annoying, maybe add a ram usage condition?
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnCalendar = "*-*-* 05:00:00 Europe/Samara";
