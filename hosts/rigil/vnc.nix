@@ -88,7 +88,7 @@ in {
     };
     script = with pkgs; writeShellApplication {
       name = "vnc-netns-proxy.sh";
-      runtimeInputs = [ coreutils iproute2 hev-socks5-tunnel ];
+      runtimeInputs = [ coreutils iproute2 hev-socks5-tunnel systemd ];
       text = ''
         # create tun device in the root netns
         ip tuntap add dev "${tun-name}" mode tun
@@ -114,6 +114,9 @@ in {
         ip -n "${netns-name}" addr add "${tun-ip}" dev "${tun-name}"
         ip -n "${netns-name}" route add default dev "${tun-name}"
 
+        # notify systemd that we finished initialisation
+        systemd-notify --ready
+
         wait
       '';
     };
@@ -128,7 +131,7 @@ in {
   in {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      Type = "simple";
+      Type = "notify";
       ExecStart = "${script}/bin/vnc-netns-proxy.sh";
       ExecStopPost = "${cleanup-script}/bin/vnc-netns-proxy-cleanup.sh";
       Restart = "on-failure";
