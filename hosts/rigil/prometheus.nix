@@ -79,6 +79,10 @@
         admin_password = "$__file{/run/credentials/grafana.service/admin_password}";
         secret_key = "$__file{/run/credentials/grafana.service/secret_key}";
       };
+      auth = {
+        login_maximum_inactive_lifetime_duration = "1M"; # 1 month
+        login_maximum_lifetime_duration = "12M"; # 12 months
+      };
     };
 
     provision = {
