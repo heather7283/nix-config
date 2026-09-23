@@ -116,7 +116,7 @@ let
           "ip": [ "127.0.0.1" ],
           "port": 51820
          },
-         { // wireguard subnet (for pyxis)
+         { // wireguard subnet (for pyxis and surfpad)
           "action": "allow",
           "ip": [ "10.20.30.0/24" ]
          },
@@ -172,7 +172,7 @@ let
         "ruleTag": "wireguard-subnet",
         "inboundTag": [ "vless-in" ],
         "ip": [ "10.20.30.0/24" ],
-        "user": [ "pyxis@localhost" ],
+        "user": [ "pyxis@localhost", "surfpad@localhost" ],
         "outboundTag": "direct-out"
        },
        {
