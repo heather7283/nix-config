@@ -32,8 +32,8 @@
       Name=ens3
 
       [Network]
-      Address=${ph."ip/v4/address"}
-      Address=${ph."ip/v6/address"}
+      Address=${ph."ip/v4/address"}/${ph."ip/v4/mask"}
+      Address=${ph."ip/v6/address"}/${ph."ip/v6/mask"}
 
       [Route]
       Gateway=${ph."ip/v4/gateway"}

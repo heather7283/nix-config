@@ -8,10 +8,12 @@
       ip = {
         v4 = {
           address = _: {};
+          mask = _: {};
           gateway = _: {};
         };
         v6 = {
           address = _: {};
+          mask = _: {};
           gateway = _: {};
         };
       };
