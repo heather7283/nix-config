@@ -1,10 +1,7 @@
 { lib, ... }:
 
 final: prev: {
-  xray = (prev.unstable.xray.override (old: {
-    # lmao
-    buildGo126Module = final.buildGo127Module;
-  })).overrideAttrs (old: let
+  xray = prev.unstable.xray.overrideAttrs (old: let
     version = "26.10.17";
     patches = with builtins; readDir ./patches |> attrNames |> map (p: ./patches/${p});
   in {
