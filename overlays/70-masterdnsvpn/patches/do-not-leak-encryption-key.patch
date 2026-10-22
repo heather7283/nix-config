@@ -1,0 +1,13 @@
+diff --git a/cmd/server/main.go b/cmd/server/main.go
+index 342166c..fc9a61c 100644
+--- a/cmd/server/main.go
++++ b/cmd/server/main.go
+@@ -188,7 +188,7 @@ func main() {
+ 		)
+ 	}
+ 
+-	log.Infof("\U0001F511 <green>Active Encryption Key: <yellow>%s</yellow></green>", keyInfo.Key)
++	log.Infof("\U0001F511 <green>Active Encryption Key: <yellow>REDACTED</yellow></green>")
+ 	log.Debugf("\u25B6\uFE0F <green>Starting UDP Server...</green>")
+ 
+ 	if err := srv.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {

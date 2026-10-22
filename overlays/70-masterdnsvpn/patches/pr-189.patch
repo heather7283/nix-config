@@ -1,0 +1,341 @@
+commit 8a81e3def5175d9cc811a27b5e29e27e84b5970b
+Author: nyxst4ck <nyxst4ck@gmail.com>
+Date:   Mon Jun 15 11:15:51 2026 -0300
+
+    fix: return NXDOMAIN for non-tunnel DNS queries (#189)
+
+    * fix: return NXDOMAIN for non-tunnel DNS queries
+
+    * fix(udp): return FORMERR for matcher format errors
+
+    * fix(udp): preserve nodata for allowed A probes
+
+    ---------
+
+    Co-authored-by: nyxst4ck <289980115+nyxst4ck@users.noreply.github.com>
+
+diff --git a/internal/dnsparser/response.go b/internal/dnsparser/response.go
+index c72ede9..01a75e4 100644
+--- a/internal/dnsparser/response.go
++++ b/internal/dnsparser/response.go
+@@ -40,6 +40,10 @@ func BuildNoDataResponseFromLite(request []byte, parsed LitePacket) ([]byte, err
+ 	return buildNoDataResponseLite(request, parsed)
+ }
+
++func BuildNameErrorResponseFromLite(request []byte, parsed LitePacket) ([]byte, error) {
++	return buildAuthoritativeResponseWithRCodeLite(request, parsed, Enums.DNSR_CODE_NAME_ERROR)
++}
++
+ func BuildFormatErrorResponse(request []byte) ([]byte, error) {
+ 	return buildResponseWithRCode(request, Enums.DNSR_CODE_FORMAT_ERROR)
+ }
+@@ -102,6 +106,14 @@ func buildResponseWithRCode(request []byte, rcode uint8) ([]byte, error) {
+ }
+
+ func buildResponseWithRCodeLite(request []byte, parsed LitePacket, rcode uint8) ([]byte, error) {
++	return buildResponseWithFlagsLite(request, parsed, buildResponseFlags(parsed.Header.Flags, rcode))
++}
++
++func buildAuthoritativeResponseWithRCodeLite(request []byte, parsed LitePacket, rcode uint8) ([]byte, error) {
++	return buildResponseWithFlagsLite(request, parsed, buildAuthoritativeResponseFlags(parsed.Header.Flags, rcode))
++}
++
++func buildResponseWithFlagsLite(request []byte, parsed LitePacket, flags uint16) ([]byte, error) {
+ 	if len(request) < dnsHeaderSize {
+ 		return nil, ErrPacketTooShort
+ 	}
+@@ -118,7 +130,7 @@ func buildResponseWithRCodeLite(request []byte, parsed LitePacket, rcode uint8)
+
+ 	response := make([]byte, dnsHeaderSize+questionLen+optLen)
+ 	binary.BigEndian.PutUint16(response[0:2], parsed.Header.ID)
+-	binary.BigEndian.PutUint16(response[2:4], buildResponseFlags(parsed.Header.Flags, rcode))
++	binary.BigEndian.PutUint16(response[2:4], flags)
+ 	binary.BigEndian.PutUint16(response[4:6], parsed.Header.QDCount)
+ 	binary.BigEndian.PutUint16(response[10:12], uint16(getARCount(optLen)))
+
+@@ -191,6 +203,29 @@ func buildResponseFlags(requestFlags uint16, rcode uint8) uint16 {
+ 	return flags
+ }
+
++func buildAuthoritativeResponseFlags(requestFlags uint16, rcode uint8) uint16 {
++	const (
++		flagQR     uint16 = 1 << 15
++		flagAA     uint16 = 1 << 10
++		flagTC     uint16 = 1 << 9
++		flagRD     uint16 = 1 << 8
++		flagRA     uint16 = 1 << 7
++		flagCD     uint16 = 1 << 4
++		opcodeMask uint16 = 0x7800
++	)
++
++	flags := flagQR | flagAA | (requestFlags & opcodeMask) | uint16(rcode&0x0F)
++	if requestFlags&flagRD != 0 {
++		flags |= flagRD
++	}
++	if requestFlags&flagCD != 0 {
++		flags |= flagCD
++	}
++
++	flags &^= flagRA | flagTC
++	return flags
++}
++
+ func extractQuestionSection(request []byte, header Header) ([]byte, uint16, int) {
+ 	if header.QDCount == 0 {
+ 		return nil, 0, dnsHeaderSize
+diff --git a/internal/dnsparser/response_test.go b/internal/dnsparser/response_test.go
+index 1ede059..19e768f 100644
+--- a/internal/dnsparser/response_test.go
++++ b/internal/dnsparser/response_test.go
+@@ -310,6 +310,55 @@ func TestBuildNoDataResponseFromLiteBuildsEmptyNoErrorResponse(t *testing.T) {
+ 	}
+ }
+
++func TestBuildNameErrorResponseFromLiteBuildsAuthoritativeNXDOMAIN(t *testing.T) {
++	request := buildDNSQuery(0x6161, "outside.example", Enums.DNS_RECORD_TYPE_A, true)
++	request[3] |= 0x10 // CD
++
++	parsed, err := ParsePacketLite(request)
++	if err != nil {
++		t.Fatalf("ParsePacketLite returned error: %v", err)
++	}
++
++	response, err := BuildNameErrorResponseFromLite(request, parsed)
++	if err != nil {
++		t.Fatalf("BuildNameErrorResponseFromLite returned error: %v", err)
++	}
++
++	flags := binary.BigEndian.Uint16(response[2:4])
++	if got := flags & 0x000F; got != Enums.DNSR_CODE_NAME_ERROR {
++		t.Fatalf("unexpected rcode: got=%d want=%d", got, Enums.DNSR_CODE_NAME_ERROR)
++	}
++	if flags&(1<<15) == 0 {
++		t.Fatal("response must set QR")
++	}
++	if flags&(1<<10) == 0 {
++		t.Fatal("authoritative name error response must set AA")
++	}
++	if flags&(1<<7) != 0 {
++		t.Fatal("authoritative name error response must clear RA")
++	}
++	if flags&(1<<8) == 0 {
++		t.Fatal("response must preserve RD")
++	}
++	if flags&(1<<4) == 0 {
++		t.Fatal("response must preserve CD")
++	}
++	if got := binary.BigEndian.Uint16(response[6:8]); got != 0 {
++		t.Fatalf("unexpected ancount: got=%d want=0", got)
++	}
++
++	full, err := ParsePacket(response)
++	if err != nil {
++		t.Fatalf("ParsePacket(response) returned error: %v", err)
++	}
++	if len(full.Questions) != 1 || full.Questions[0].Name != "outside.example" {
++		t.Fatalf("unexpected question section: got=%+v", full.Questions)
++	}
++	if len(full.Additional) != 1 || full.Additional[0].Type != Enums.DNS_RECORD_TYPE_OPT {
++		t.Fatalf("response must preserve the OPT record")
++	}
++}
++
+ func buildDNSQuery(id uint16, name string, qtype uint16, withOPT bool) []byte {
+ 	qname := encodeDNSName(name)
+ 	arCount := uint16(0)
+diff --git a/internal/udpserver/server_ingress.go b/internal/udpserver/server_ingress.go
+index b47891e..80bc0c8 100644
+--- a/internal/udpserver/server_ingress.go
++++ b/internal/udpserver/server_ingress.go
+@@ -33,20 +33,24 @@ func (s *Server) handlePacket(packet []byte) []byte {
+ 	}
+
+ 	decision := s.domainMatcher.Match(parsed)
+-	if decision.Action == domainMatcher.ActionProcess {
++	switch decision.Action {
++	case domainMatcher.ActionProcess:
+ 		response := s.handleTunnelCandidate(packet, parsed, decision)
+ 		if response != nil {
+ 			return response
+ 		}
+
+ 		return s.buildNoDataResponseLiteLogged(packet, parsed, "domain-match-process-failed")
++	case domainMatcher.ActionFormatError:
++		return s.buildFormatErrorResponseLiteLogged(packet, parsed, decision.Reason)
++	case domainMatcher.ActionNoData:
++		if decision.Reason == "unauthorized-domain" {
++			return s.buildNameErrorResponseLiteLogged(packet, parsed, decision.Reason)
++		}
++		return s.buildNoDataResponseLiteLogged(packet, parsed, decision.Reason)
++	default:
++		return s.buildNoDataResponseLiteLogged(packet, parsed, "domain-match-unknown-action")
+ 	}
+-
+-	if decision.Action == domainMatcher.ActionFormatError || decision.Action == domainMatcher.ActionNoData {
+-		return s.buildNoDataResponseLiteLogged(packet, parsed, "domain-match-no-data")
+-	}
+-
+-	return s.buildNoDataResponseLiteLogged(packet, parsed, "domain-match-no-data")
+ }
+
+ func (s *Server) handleTunnelCandidate(packet []byte, parsed DnsParser.LitePacket, decision domainMatcher.Decision) []byte {
+diff --git a/internal/udpserver/server_ingress_test.go b/internal/udpserver/server_ingress_test.go
+new file mode 100644
+index 0000000..5082285
+--- /dev/null
++++ b/internal/udpserver/server_ingress_test.go
+@@ -0,0 +1,112 @@
++package udpserver
++
++import (
++	"encoding/binary"
++	"testing"
++
++	domainMatcher "masterdnsvpn-go/internal/domainmatcher"
++	Enums "masterdnsvpn-go/internal/enums"
++)
++
++func TestHandlePacketRejectsUnauthorizedDomainAsNXDOMAIN(t *testing.T) {
++	server := &Server{
++		domainMatcher: domainMatcher.New([]string{"vpn.example.com"}, 3),
++	}
++	request := buildTestDNSQuery(0x4242, "example.org", Enums.DNS_RECORD_TYPE_A)
++
++	response := server.handlePacket(request)
++	if response == nil {
++		t.Fatal("expected DNS response, got nil")
++	}
++
++	flags := binary.BigEndian.Uint16(response[2:4])
++	if got := flags & 0x000F; got != Enums.DNSR_CODE_NAME_ERROR {
++		t.Fatalf("unexpected rcode: got=%d want=%d", got, Enums.DNSR_CODE_NAME_ERROR)
++	}
++	if flags&(1<<7) != 0 {
++		t.Fatal("unauthorized-domain response must clear RA")
++	}
++	if flags&(1<<10) == 0 {
++		t.Fatal("unauthorized-domain response must set AA")
++	}
++	if flags&(1<<8) == 0 {
++		t.Fatal("unauthorized-domain response must preserve RD")
++	}
++	if got := binary.BigEndian.Uint16(response[4:6]); got != 1 {
++		t.Fatalf("unexpected qdcount: got=%d want=1", got)
++	}
++	if got := binary.BigEndian.Uint16(response[6:8]); got != 0 {
++		t.Fatalf("unexpected ancount: got=%d want=0", got)
++	}
++}
++
++func TestHandlePacketRejectsMatcherFormatErrorAsFORMERR(t *testing.T) {
++	server := &Server{
++		domainMatcher: domainMatcher.New([]string{"vpn.example.com"}, 3),
++	}
++	request := buildTestDNSQuery(0x5151, ".", Enums.DNS_RECORD_TYPE_TXT)
++
++	response := server.handlePacket(request)
++	if response == nil {
++		t.Fatal("expected DNS response, got nil")
++	}
++
++	flags := binary.BigEndian.Uint16(response[2:4])
++	if got := flags & 0x000F; got != Enums.DNSR_CODE_FORMAT_ERROR {
++		t.Fatalf("unexpected rcode: got=%d want=%d", got, Enums.DNSR_CODE_FORMAT_ERROR)
++	}
++}
++
++func TestHandlePacketKeepsUnsupportedAllowedAQueryAsNoData(t *testing.T) {
++	server := &Server{
++		domainMatcher: domainMatcher.New([]string{"vpn.example.com"}, 3),
++	}
++	request := buildTestDNSQuery(0x6161, "probe.vpn.example.com", Enums.DNS_RECORD_TYPE_A)
++
++	response := server.handlePacket(request)
++	if response == nil {
++		t.Fatal("expected DNS response, got nil")
++	}
++
++	flags := binary.BigEndian.Uint16(response[2:4])
++	if got := flags & 0x000F; got != Enums.DNSR_CODE_NO_ERROR {
++		t.Fatalf("unexpected rcode: got=%d want=%d", got, Enums.DNSR_CODE_NO_ERROR)
++	}
++	if got := binary.BigEndian.Uint16(response[6:8]); got != 0 {
++		t.Fatalf("unexpected ancount: got=%d want=0", got)
++	}
++}
++
++func buildTestDNSQuery(id uint16, name string, qtype uint16) []byte {
++	qname := encodeTestDNSName(name)
++	packet := make([]byte, 12+len(qname)+4)
++	binary.BigEndian.PutUint16(packet[0:2], id)
++	binary.BigEndian.PutUint16(packet[2:4], 0x0100)
++	binary.BigEndian.PutUint16(packet[4:6], 1)
++
++	offset := 12
++	offset += copy(packet[offset:], qname)
++	binary.BigEndian.PutUint16(packet[offset:offset+2], qtype)
++	binary.BigEndian.PutUint16(packet[offset+2:offset+4], Enums.DNSQ_CLASS_IN)
++	return packet
++}
++
++func encodeTestDNSName(name string) []byte {
++	if name == "." || name == "" {
++		return []byte{0}
++	}
++
++	encoded := make([]byte, 0, len(name)+2)
++	labelStart := 0
++	for i := 0; i <= len(name); i++ {
++		if i != len(name) && name[i] != '.' {
++			continue
++		}
++
++		labelLen := i - labelStart
++		encoded = append(encoded, byte(labelLen))
++		encoded = append(encoded, name[labelStart:i]...)
++		labelStart = i + 1
++	}
++	return append(encoded, 0)
++}
+diff --git a/internal/udpserver/server_utils.go b/internal/udpserver/server_utils.go
+index b26f7b3..17d02ca 100644
+--- a/internal/udpserver/server_utils.go
++++ b/internal/udpserver/server_utils.go
+@@ -44,6 +44,22 @@ func buildNoDataResponseLite(packet []byte, parsed DnsParser.LitePacket) []byte
+ 	return response
+ }
+
++func buildNameErrorResponseLite(packet []byte, parsed DnsParser.LitePacket) []byte {
++	response, err := DnsParser.BuildNameErrorResponseFromLite(packet, parsed)
++	if err != nil {
++		return nil
++	}
++	return response
++}
++
++func buildFormatErrorResponseLite(packet []byte, parsed DnsParser.LitePacket) []byte {
++	response, err := DnsParser.BuildFormatErrorResponseFromLite(packet, parsed)
++	if err != nil {
++		return nil
++	}
++	return response
++}
++
+ func (s *Server) buildNoDataResponseLogged(packet []byte, reason string) []byte {
+ 	return buildNoDataResponse(packet)
+ }
+@@ -52,6 +68,14 @@ func (s *Server) buildNoDataResponseLiteLogged(packet []byte, parsed DnsParser.L
+ 	return buildNoDataResponseLite(packet, parsed)
+ }
+
++func (s *Server) buildNameErrorResponseLiteLogged(packet []byte, parsed DnsParser.LitePacket, reason string) []byte {
++	return buildNameErrorResponseLite(packet, parsed)
++}
++
++func (s *Server) buildFormatErrorResponseLiteLogged(packet []byte, parsed DnsParser.LitePacket, reason string) []byte {
++	return buildFormatErrorResponseLite(packet, parsed)
++}
++
+ func isClosedStreamAwarePacketType(packetType uint8) bool {
+ 	switch packetType {
+ 	case Enums.PACKET_STREAM_SYN,
