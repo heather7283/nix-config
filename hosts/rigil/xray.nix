@@ -235,10 +235,35 @@ let
      }
     }
   '';
+
+  dnsDomain = ph."masterdnsvpn/domain";
+  dnsEncryptionMethod = ph."masterdnsvpn/encryption_method";
+  publicIp = ph."ip/v4/address";
+
+  masterdnsvpnConfig = ''
+    DOMAIN = [ "${dnsDomain}" ]
+
+    PROTOCOL_TYPE = "TCP"
+    FORWARD_IP = "127.0.0.1"
+    FORWARD_PORT = 8008
+
+    UDP_HOST = "${publicIp}"
+    UDP_PORT = 53
+
+    DATA_ENCRYPTION_METHOD = ${dnsEncryptionMethod}
+    ENCRYPTION_KEY_FILE = "/run/credentials/masterdnsvpn.service/encryption-key"
+
+    LOG_LEVEL = "INFO"
+    CONFIG_VERSION = "12"
+  '';
 in {
   sops.templates."xray-config.jsonc" = {
     content = xrayConfig;
     restartUnits = [ "xray.service" ];
+  };
+  sops.templates."masterdnsvpn-config.toml" = {
+    content = masterdnsvpnConfig;
+    restartUnits = [ "masterdnsvpn.service" ];
   };
 
   services.xray = {
@@ -257,8 +282,39 @@ in {
     };
   };
 
+  systemd.services.masterdnsvpn = {
+    wantedBy = [ "multi-user.target" ];
+    wants = [ "network.target" ];
+    after = [ "network.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = builtins.concatStringsSep " " [
+        "${pkgs.masterdnsvpn}/bin/masterdnsvpn-server"
+        "-config"
+        "/run/credentials/masterdnsvpn.service/config.toml"
+      ];
+      Restart = "on-failure";
+
+      LoadCredential = [
+        "encryption-key:${config.sops.secrets."masterdnsvpn/encryption_key".path}"
+        "config.toml:${config.sops.templates."masterdnsvpn-config.toml".path}"
+      ];
+
+      # bind on 53
+      CapabilityBoundingSet = "CAP_NET_BIND_SERVICE";
+      AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+
+      DynamicUser = true;
+      ProtectHome = true;
+      RestrictAddressFamilies = "AF_INET AF_INET6";
+      DevicePolicy = "closed";
+      SystemCallFilter = "@system-service";
+    };
+  };
+
   networking = {
     firewall.allowedTCPPorts = [ 443 8443 ];
+    firewall.allowedUDPPorts = [ 53 ];
     nftables.tables.xray-443-redirect = {
       family = "inet";
       content = ''

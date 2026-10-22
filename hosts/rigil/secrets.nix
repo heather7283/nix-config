@@ -52,6 +52,16 @@
         };
       };
 
+      masterdnsvpn = let
+        attrs = {
+          restartUnits = [ "masterdnsvpn.service" ];
+        };
+      in {
+        domain = _: attrs;
+        encryption_method = _: attrs;
+        encryption_key = _: attrs;
+      };
+
       giorno = {
         "config.toml" = _: {
           sopsFile = paths.giorno."config.toml";
