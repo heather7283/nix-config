@@ -21,7 +21,7 @@ index b8922ef6f..bb9564ee9 100644
  .DS_Store
 diff --git a/Src/SqliteHistory/sqlite_history.c b/Src/SqliteHistory/sqlite_history.c
 new file mode 100644
-index 000000000..d722b5604
+index 000000000..1f85320e2
 --- /dev/null
 +++ b/Src/SqliteHistory/sqlite_history.c
 @@ -0,0 +1,602 @@
@@ -195,7 +195,7 @@ index 000000000..d722b5604
 +	if (sqlite.step(g.insert_cwd) == SQLITE_ROW) {
 +	    cwd_id = sqlite.column_int64(g.insert_cwd, 0);
 +	} else {
-+	    ERROR("could not insert cwd: %s", cwd, sqlite.errmsg(g.db));
++	    ERROR("could not insert cwd %s: %s", cwd, sqlite.errmsg(g.db));
 +	}
 +	sqlite.clear_bindings(g.insert_cwd);
 +	sqlite.reset(g.insert_cwd);
