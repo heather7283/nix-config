@@ -93,6 +93,21 @@ let
         "destOverride": [ "http", "tls", "quic" ],
         "routeOnly": true
        }
+      },
+      {
+       "tag": "xdns-in",
+       "protocol": "vless",
+       "listen": "127.0.0.1",
+       "port": 8008,
+       "settings": {
+        "clients": ${clients},
+        "decryption": "none"
+       },
+       "sniffing": {
+        "enabled": true,
+        "destOverride": [ "http", "tls", "quic" ],
+        "routeOnly": true
+       }
       }
      ],
      "outbounds": [
@@ -154,7 +169,7 @@ let
       "rules": [
        {
         "ruleTag": "wireguard",
-        "inboundTag": [ "vless-in" ],
+        "inboundTag": [ "vless-in", "xdns-in" ],
         "ip": [ "127.0.0.1" ],
         "port": 51820,
         "network": "udp",
@@ -162,7 +177,7 @@ let
        },
        {
         "ruleTag": "vnc",
-        "inboundTag": [ "vless-in" ],
+        "inboundTag": [ "vless-in", "xdns-in" ],
         "ip": [ "127.0.0.1" ],
         "port": 5900,
         "network": "tcp",
@@ -170,7 +185,7 @@ let
        },
        {
         "ruleTag": "wireguard-subnet",
-        "inboundTag": [ "vless-in" ],
+        "inboundTag": [ "vless-in", "xdns-in" ],
         "ip": [ "10.20.30.0/24" ],
         "user": [ "pyxis@localhost", "surfpad@localhost" ],
         "outboundTag": "direct-out"
