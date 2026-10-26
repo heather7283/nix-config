@@ -2,7 +2,7 @@
 
 final: prev: {
   xray = prev.unstable.xray.overrideAttrs (old: let
-    version = "26.10.17";
+    version = "26.10.21";
     patches = with builtins; readDir ./patches |> attrNames |> map (p: ./patches/${p});
   in {
     inherit version;
@@ -11,9 +11,9 @@ final: prev: {
       owner = "XTLS";
       repo = "Xray-core";
       rev = "v${version}";
-      hash = "sha256-MUeF3LwZ8bN7gEQCDdzgZKg+agYIokxfQ81VWIkXUgY=";
+      hash = "sha256-1FwcB/qZaH7W9b+GSe+CG/s+uStaDjz792OxDc3uAyg=";
     };
-    vendorHash = "sha256-8Cfbzi3kF3kRtARD2dYaWU4KrcFg65tkjSPO3cWrtps=";
+    vendorHash = "sha256-o4mKfCGgI4r5ZatnA4AsK4zR0/qOl2qpqCmoJmE2jBQ=";
 
     patches = (old.patches or []) ++ patches;
   });
