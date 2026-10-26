@@ -6,13 +6,13 @@
 
 buildGoModule rec {
   pname = "masterdnsvpn";
-  version = "2026.06.13.234407-7de2476";
+  version = "2026.10.26.100415-5f83ee9";
 
   src = fetchFromGitHub {
     owner = "masterking32";
     repo = "MasterDnsVPN";
     rev = "v${version}";
-    hash = "sha256-EuH6YQYhvYqv97L1+ySKYtyw1+FyiD6VyEDb5+dJEjk=";
+    hash = "sha256-WuONqlZDc8nJkef06X77Zunswj8pQ3lXlsPmsqYNoIo=";
   };
   vendorHash = "sha256-X0TpheIBmhT0tbNf5FEnUW1faIgY2oTxMfoRUDTjn34=";
 
