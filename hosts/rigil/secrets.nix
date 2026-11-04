@@ -104,6 +104,10 @@
       pixivfe.env = _: {
         restartUnits = [ "pixivfe.service" ];
       };
+
+      sillytavern.password = _: {
+        restartUnits = [ "sillytavern.service" ];
+      };
     });
   };
 }
