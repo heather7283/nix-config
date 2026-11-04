@@ -9,6 +9,8 @@
   system.nssModules = lib.mkForce [];
   services.nscd.enable = false;
 
+  services.vnstat.enable = true;
+
   ext.zram.enable = true;
 
   services.giorno = {
