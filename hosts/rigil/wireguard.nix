@@ -20,6 +20,11 @@
           publicKey = "pLUtoUowRkkp4a00eimV7oBhUzq4JgHk9OIi5oP7wTA=";
           allowedIPs = [ "10.20.30.50/32" "10.20.30.41/32" ];
         }
+        {
+          # surfpad
+          publicKey = "surf+5KBUlTxfUSUNndQlbuvMGZk72B2VrdITRiFj3A=";
+          allowedIPs = [ "10.20.30.5/32" ];
+        }
         # Note: 10.20.30.100 is a fake IP reserved by pyxis!
         # Do not add a real peer with this IP here
       ];
