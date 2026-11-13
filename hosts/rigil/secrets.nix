@@ -108,6 +108,11 @@
       sillytavern.password = _: {
         restartUnits = [ "sillytavern.service" ];
       };
+
+      muse = {
+        youtube_api_key = _: {};
+        discord_token = _: {};
+      };
     });
   };
 }

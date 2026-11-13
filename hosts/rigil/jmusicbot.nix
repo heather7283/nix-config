@@ -23,6 +23,7 @@
   };
 
   virtualisation.quadlet.containers.jmusicbot = {
+    enable = false;
     containerConfig = {
       Image = "docker.io/library/eclipse-temurin:25-jre";
       AutoUpdate = "registry";
