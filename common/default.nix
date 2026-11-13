@@ -51,8 +51,8 @@
     # https://github.com/systemd/systemd/issues/5356
     StatusUnitFormat = "combined";
     # https://michael.stapelberg.ch/posts/2024-01-17-systemd-indefinite-service-restarts/
-    DefaultRestartSec = 3;
-    DefaultStartLimitIntervalSec = 0;
+    #DefaultRestartSec = 3;
+    #DefaultStartLimitIntervalSec = 0;
   };
   services.journald.extraConfig = ''
     SystemMaxUse=1G
