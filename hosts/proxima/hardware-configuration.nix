@@ -12,8 +12,8 @@
     # no need to set devices,
     # disko will add all devices that have a EF02 partition to the list already
     # devices = [ ];
-    efiSupport = true;
-    efiInstallAsRemovable = true;
+    efiSupport = false;
+    efiInstallAsRemovable = false;
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

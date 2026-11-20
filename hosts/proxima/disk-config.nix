@@ -13,16 +13,6 @@
             type = "EF02";
             size = "1M";
           };
-          esp = {
-            name = "esp";
-            type = "EF00";
-            size = "500M";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountpoint = "/boot";
-            };
-          };
           root = {
             name = "root";
             size = "100%";
